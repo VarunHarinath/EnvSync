@@ -16,9 +16,9 @@ class ConnectDatabase {
     }
   }
 
-  async dbQuery(querry) {
+  async dbQuery(text, values = []) {
     try {
-      return await this.pool.query(querry);
+      return await this.pool.query(text, values);
     } catch (e) {
       console.log(e);
     }
