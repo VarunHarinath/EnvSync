@@ -20,7 +20,7 @@ class ConnectDatabase {
     try {
       return await this.pool.query(text, values);
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 }

@@ -58,11 +58,12 @@ class EnvSyncRepo {
   }
   async createEnvironmentSecrets(environment_id, secret_id) {
     try {
-      query = {
+      const query = {
         text: "INSERT INTO environment_secrets(environment_id,secret_id) values($1,$2) RETURNING *",
         values: [environment_id, secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
     } catch (e) {
       console.error(e);
       throw e;
@@ -70,11 +71,12 @@ class EnvSyncRepo {
   }
   async createApi(project_id, environment_id, key_hash, key_prefix) {
     try {
-      query = {
-        text: "INSERT INTO api_keys(project_id,environment_id,key_hash,key_prefix) values($1,$2,$3,$4)",
+      const query = {
+        text: "INSERT INTO api_keys(project_id,environment_id,key_hash,key_prefix) values($1,$2,$3,$4) RETURNING *",
         values: [project_id, environment_id, key_hash, key_prefix],
       };
       const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
     } catch (e) {
       throw e;
     }
