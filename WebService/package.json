@@ -7,10 +7,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon --exec \"node --import ./Utilities/instrument.js\" index.js",
+    "start": "node --import ./Utilities/instrument.js index.js"
   },
   "dependencies": {
+    "@sentry/node": "^10.36.0",
+    "@sentry/profiling-node": "^10.36.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "nodemon": "^3.1.11",
