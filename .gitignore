@@ -1,2 +1,57 @@
-node_modules
-DS_Store
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.log
+
+
+# Node.js / npm / pnpm / yarn
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+
+# Build outputs
+dist/
+build/
+out/
+
+
+# React / Vite
+.vite/
+.cache/
+.eslintcache
+
+
+
+# Logs
+logs/
+*.log
+
+
+# Sentry
+.sentryclirc
+.sentry/
+
+
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+
+# Misc
+tmp/
+temp/
+.cache/
