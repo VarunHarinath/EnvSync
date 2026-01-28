@@ -11,9 +11,11 @@
     "start": "node --import ./Utilities/instrument.js index.js"
   },
   "dependencies": {
+    "@clerk/express": "^1.7.65",
     "@sentry/node": "^10.36.0",
     "@sentry/profiling-node": "^10.36.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "nodemon": "^3.1.11",
     "pg": "^8.16.3"
