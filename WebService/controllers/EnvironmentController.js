@@ -5,11 +5,11 @@ const createEnvironment = async (req, res) => {
     const envSyncService = new EnvSyncService();
     const createEnvironment = await envSyncService.newEnvironment(
       project_id,
-      environmentName
+      environmentName,
     );
     res.json(createEnvironment);
   } catch (e) {
-    res.json(e);
+    throw e;
   }
 };
 

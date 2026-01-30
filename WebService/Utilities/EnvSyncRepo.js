@@ -11,7 +11,32 @@ class EnvSyncRepo {
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
     } catch (e) {
-      console.error(e);
+      throw e;
+    }
+  }
+  // Get all the projects
+  async getProjects() {
+    try {
+      const query = {
+        text: "SELECT * FROM projects",
+      };
+      const result = await db.dbQuery(query.text);
+      return result.rows;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Get Project by Id
+  async getProjectById(project_id) {
+    try {
+      const query = {
+        text: "SELECT * FROM projects WHERE id = $1",
+        values: [project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
       throw e;
     }
   }

@@ -7,11 +7,11 @@ const createSecret = async (req, res) => {
     const createSecret = await envSyncService.newSecret(project_id, secretName);
     const createSecretValue = await envSyncService.newSecretValue(
       createSecret.id,
-      secretValue
+      secretValue,
     );
     res.json(createSecretValue);
   } catch (e) {
-    res.json(e);
+    throw e;
   }
 };
 

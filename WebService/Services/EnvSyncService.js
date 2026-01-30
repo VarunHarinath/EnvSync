@@ -12,12 +12,32 @@ class EnvSyncService {
       throw e;
     }
   }
+  // Get all projects
+  async getProject() {
+    try {
+      const getProjects = await this.envSyncRepo.getProjects();
+      return getProjects;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Get Project by Id
+  async getProjectById(project_id) {
+    try {
+      const getProjectById = await this.envSyncRepo.getProjectById(project_id);
+      return getProjectById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   //   Environment creation based on user Project_id and name for the Environment
   async newEnvironment(project_id, environmentName) {
     try {
       const createEnvironment = await this.envSyncRepo.createEnvironment(
         project_id,
-        environmentName
+        environmentName,
       );
       return createEnvironment;
     } catch (e) {
@@ -29,7 +49,7 @@ class EnvSyncService {
     try {
       const createSecret = await this.envSyncRepo.createSecrets(
         project_id,
-        secretName
+        secretName,
       );
       return createSecret;
     } catch (e) {
@@ -41,7 +61,7 @@ class EnvSyncService {
     try {
       const createSecretValue = await this.envSyncRepo.createSecretsValue(
         secrect_id,
-        secrectValue
+        secrectValue,
       );
       return createSecretValue;
     } catch (e) {
@@ -54,7 +74,7 @@ class EnvSyncService {
       const createEnvironmentSecret =
         await this.envSyncRepo.createEnvironmentSecrets(
           environment_id,
-          secrect_id
+          secrect_id,
         );
       return createEnvironmentSecret;
     } catch (e) {
@@ -68,7 +88,7 @@ class EnvSyncService {
         project_id,
         environment_id,
         key_hash,
-        key_prefix
+        key_prefix,
       );
       return createApi;
     } catch (e) {

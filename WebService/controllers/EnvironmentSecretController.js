@@ -6,11 +6,11 @@ const createEnvironmentSecret = async (req, res) => {
     const envSyncService = new EnvSyncService();
     const createEnvironmentSecret = await envSyncService.newEnvironmentSecret(
       environment_id,
-      secret_id
+      secret_id,
     );
     res.json(createEnvironmentSecret);
   } catch (e) {
-    res.json(e);
+    throw e;
   }
 };
 
