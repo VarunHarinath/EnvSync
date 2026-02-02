@@ -80,3 +80,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Jmeter
+jmeter.log
