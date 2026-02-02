@@ -31,6 +31,27 @@ class EnvSyncService {
       throw e;
     }
   }
+  // Update Project Name by Project Id
+
+  async updateProjectNameById(project_id, name) {
+    try {
+      const updateProjectNameById =
+        await this.envSyncRepo.updateNameByProjectId(project_id, name);
+      return updateProjectNameById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async deleteProjectById(project_id) {
+    try {
+      const deleteProjectById =
+        await this.envSyncRepo.deleteProjectById(project_id);
+      return deleteProjectById;
+    } catch (e) {
+      throw e;
+    }
+  }
 
   //   Environment creation based on user Project_id and name for the Environment
   async newEnvironment(project_id, environmentName) {

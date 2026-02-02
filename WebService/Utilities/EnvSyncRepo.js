@@ -41,6 +41,38 @@ class EnvSyncRepo {
     }
   }
 
+  // Update name by ProjectId
+  // ***** TO ADD: UPDATE ONLY IF THE VERSION IS SAME BEFORE UPDATING;
+
+  async updateNameByProjectId(project_id, name) {
+    try {
+      const query = {
+        text: "UPDATE projects SET name = $1,updated_at = NOW() WHERE id = $2 RETURNING * ;",
+        values: [name, project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      console.log(result);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Delete project by Id
+
+  async deleteProjectById(project_id) {
+    try {
+      const query = {
+        text: "DELETE FROM projects WHERE id = $1 RETURNING *",
+        values: [project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async createEnvironment(project_id, name) {
     try {
       const query = {

@@ -32,4 +32,33 @@ const getProjectById = async (req, res) => {
   }
 };
 
-export { createProject, getProjects, getProjectById };
+const updateProjectNameById = async (req, res) => {
+  try {
+    const { project_id } = req.params;
+    const { name } = req.body;
+    const envSyncService = new EnvSyncService();
+    const result = await envSyncService.updateProjectNameById(project_id, name);
+    res.json(result);
+  } catch (e) {
+    throw e;
+  }
+};
+
+const deleteProjectById = async (req, res) => {
+  try {
+    const { project_id } = req.params;
+    const envSyncService = new EnvSyncService();
+    const result = await envSyncService.deleteProjectById(project_id);
+    res.json(result);
+  } catch (e) {
+    throw e;
+  }
+};
+
+export {
+  createProject,
+  getProjects,
+  getProjectById,
+  updateProjectNameById,
+  deleteProjectById,
+};
