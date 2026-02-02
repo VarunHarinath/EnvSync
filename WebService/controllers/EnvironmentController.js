@@ -9,7 +9,7 @@ const createEnvironment = async (req, res) => {
     );
     res.json(createEnvironment);
   } catch (e) {
-    throw e;
+    next(e);
   }
 };
 

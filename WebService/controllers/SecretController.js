@@ -11,7 +11,7 @@ const createSecret = async (req, res) => {
     );
     res.json(createSecretValue);
   } catch (e) {
-    throw e;
+    next(e);
   }
 };
 

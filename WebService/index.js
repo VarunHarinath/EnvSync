@@ -41,7 +41,7 @@ webService.get("/user", requireAuth(), async (req, res) => {
     const user = await clerkClient.users.getUser(userId);
     res.json(user);
   } catch (e) {
-    console.error(e);
+    next(e);
   }
 });
 
@@ -53,11 +53,11 @@ webService.get("/debug-sentry", (req, res) => {
 // Sentry error handler AFTER routes/controllers
 Sentry.setupExpressErrorHandler(webService);
 
-// Optional fallback error handler AFTER Sentry handler
+// Global fallback error handler AFTER Sentry handler
 webService.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({
-    error: "Internal Server Error",
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    error: err.message || "Internal Server Error",
     sentry: res.sentry ?? null,
   });
 });

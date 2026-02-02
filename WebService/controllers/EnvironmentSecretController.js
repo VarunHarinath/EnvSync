@@ -10,7 +10,7 @@ const createEnvironmentSecret = async (req, res) => {
     );
     res.json(createEnvironmentSecret);
   } catch (e) {
-    throw e;
+    next(e);
   }
 };
 
