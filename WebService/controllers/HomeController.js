@@ -1,6 +1,9 @@
+import { Result } from "pg";
+import { successResponse } from "../model/SuccessResponseModel.js";
+
 const homeController = (req, res) => {
   try {
-    res.status(200).json("API Working");
+    successResponse(res, Result);
   } catch (e) {
     next(e);
   }

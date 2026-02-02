@@ -1,4 +1,5 @@
 import EnvSyncService from "../Services/EnvSyncService.js";
+import { successResponse } from "../model/SuccessResponseModel.js";
 
 const createSecret = async (req, res) => {
   try {
@@ -9,7 +10,7 @@ const createSecret = async (req, res) => {
       createSecret.id,
       secretValue,
     );
-    res.json(createSecretValue);
+    successResponse(res, createSecretValue, 201);
   } catch (e) {
     next(e);
   }
