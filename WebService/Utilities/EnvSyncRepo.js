@@ -115,6 +115,21 @@ class EnvSyncRepo {
     }
   }
 
+  // delete Environment by Id
+
+  async deleteEnvironmentById(environment_id) {
+    try {
+      const query = {
+        text: "DELETE FROM environments WHERE id = $1 RETURNING *",
+        values: [environment_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async createSecrets(project_id, name) {
     try {
       const query = {

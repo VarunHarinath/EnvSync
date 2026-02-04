@@ -28,4 +28,36 @@ const getEnvironmentsById = async (req, res, next) => {
   }
 };
 
-export { createEnvironment, getEnvironmentsById };
+// Update Environment data by ID
+
+const updateEnvironmentById = async (req, res, next) => {
+  try {
+    const { environment_id } = req.params;
+    const { name } = req.body;
+    const updateEnvironmentById = await envSyncService.updateEnvironmentById(
+      environment_id,
+      name,
+    );
+    successResponse(res, updateEnvironmentById, 202);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteEnvironmentById = async (req, res, next) => {
+  try {
+    const { environment_id } = req.params;
+    const deleteEnvironmentById =
+      await envSyncService.deleteEnvironmentById(environment_id);
+    successResponse(res, deleteEnvironmentById, 201);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export {
+  createEnvironment,
+  getEnvironmentsById,
+  updateEnvironmentById,
+  deleteEnvironmentById,
+};

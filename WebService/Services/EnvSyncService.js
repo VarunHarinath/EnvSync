@@ -90,6 +90,18 @@ class EnvSyncService {
     }
   }
 
+  // Delete Environments by Id
+
+  async deleteEnvironmentById(environment_id) {
+    try {
+      const deleteEnvironmentById =
+        await this.envSyncRepo.deleteEnvironmentById(environment_id);
+      return deleteEnvironmentById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   // Creating secret variable based on Project_id and the name of the variable
   async newSecret(project_id, secretName) {
     try {
