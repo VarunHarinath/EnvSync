@@ -72,7 +72,7 @@ class EnvSyncRepo {
       throw e;
     }
   }
-
+  // Create Environment
   async createEnvironment(project_id, name) {
     try {
       const query = {
@@ -83,6 +83,34 @@ class EnvSyncRepo {
       return result.rows[0];
     } catch (e) {
       console.error(e);
+      throw e;
+    }
+  }
+
+  // Get Environment by Id
+
+  async getEnvironmentsById(project_id) {
+    try {
+      const query = {
+        text: "SELECT * FROM environments WHERE project_id = $1",
+        values: [project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+  // update EnvironmentById
+  async updateEnvironmentById(environment_id, name) {
+    try {
+      const query = {
+        text: "UPDATE environments SET name = $1,updated_at = NOW() WHERE id = $2 RETURNING * ;",
+        values: [name, environment_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
       throw e;
     }
   }

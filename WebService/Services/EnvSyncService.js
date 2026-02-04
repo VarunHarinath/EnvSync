@@ -42,7 +42,7 @@ class EnvSyncService {
       throw e;
     }
   }
-
+  // Delete Project by ID
   async deleteProjectById(project_id) {
     try {
       const deleteProjectById =
@@ -52,6 +52,7 @@ class EnvSyncService {
       throw e;
     }
   }
+  // -------------------------------------------------------
 
   //   Environment creation based on user Project_id and name for the Environment
   async newEnvironment(project_id, environmentName) {
@@ -65,6 +66,30 @@ class EnvSyncService {
       throw e;
     }
   }
+  // Get All the Environments based on the project_id
+
+  async getEnvironmentsById(project_id) {
+    try {
+      const getEnvironmentsById =
+        await this.envSyncRepo.getEnvironmentsById(project_id);
+      return getEnvironmentsById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Update Environment By Id
+
+  async updateEnvironmentById(environment_id, name) {
+    try {
+      const updateEnvironmentById =
+        await this.envSyncRepo.updateEnvironmentById(environment_id, name);
+      return updateEnvironmentById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   // Creating secret variable based on Project_id and the name of the variable
   async newSecret(project_id, secretName) {
     try {
@@ -118,4 +143,4 @@ class EnvSyncService {
   }
 }
 
-export default EnvSyncService;
+export const envSyncService = new EnvSyncService();

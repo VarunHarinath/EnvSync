@@ -1,9 +1,9 @@
-import EnvSyncService from "../Services/EnvSyncService.js";
+import { envSyncService } from "../Services/EnvSyncService.js";
 
-const createEnvironmentSecret = async (req, res) => {
+const createEnvironmentSecret = async (req, res, next) => {
   try {
     const { environment_id, secret_id } = req.body;
-    const envSyncService = new EnvSyncService();
+
     const createEnvironmentSecret = await envSyncService.newEnvironmentSecret(
       environment_id,
       secret_id,
