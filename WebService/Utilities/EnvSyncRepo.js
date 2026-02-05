@@ -129,7 +129,7 @@ class EnvSyncRepo {
       throw e;
     }
   }
-
+  // Creating secrects by project_id
   async createSecrets(project_id, name) {
     try {
       const query = {
@@ -143,6 +143,61 @@ class EnvSyncRepo {
       throw e;
     }
   }
+  // Get all the secrets by the Project_id
+  async getSecretsByProjectId(project_id) {
+    try {
+      const query = {
+        text: "SELECT * FROM secrets WHERE project_id = $1",
+        values: [project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch {
+      throw e;
+    }
+  }
+  // Get Secrects by Project_id
+  async getSecretsById(secrect_id) {
+    try {
+      const query = {
+        text: "SELECT * FROM secrets WHERE id = $1",
+        values: [secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+  // update Secrets by secrect_id
+  async updateSecretsById(secrect_id, name) {
+    try {
+      const query = {
+        text: "UPDATE secrets SET name = $1,updated_at = NOW() WHERE id = $2 RETURNING *",
+        values: [name, secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // delete Secrets by secrect_id
+  async deleteSecrectById(secrect_id) {
+    try {
+      const query = {
+        text: "DELETE FROM secrets WHERE id = $1",
+        values: [secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Create secretsValue by secret_id
   async createSecretsValue(secret_id, value) {
     try {
       const query = {
@@ -156,6 +211,48 @@ class EnvSyncRepo {
       throw e;
     }
   }
+
+  // get Secrect_Value by secrect_id
+  async getSecrectValueBySecrectId(secrect_id) {
+    try {
+      const query = {
+        text: "SELECT * FROM secret_values WHERE secret_id = $1",
+        values: [secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // update Secrect_Value by secrect_id
+  async updateSecrectValueBySecrectId(secrect_id, value) {
+    try {
+      const query = {
+        text: "UPDATE secret_values SET value = $1,updated_at = NOW() WHERE secret_id = $2 RETURNING *",
+        values: [value, secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+  // Delete Secrect Value by Secrect Id
+  async deleteSecrectValueBySecrectId(secrect_id) {
+    try {
+      const query = {
+        text: "DELETE FROM secret_values WHERE secret_id = $1",
+        values: [secrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async createEnvironmentSecrets(environment_id, secret_id) {
     try {
       const query = {

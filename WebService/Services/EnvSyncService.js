@@ -126,6 +126,68 @@ class EnvSyncService {
       throw e;
     }
   }
+
+  // getSecrets based on the project_id
+
+  async getSecretsByProjectId(project_id) {
+    try {
+      const getSecretsByProjectId =
+        await this.envSyncRepo.getSecretsByProjectId(project_id);
+      const getSecrectValueBySecrectId =
+        await this.envSyncRepo.getSecrectValueBySecrectId(
+          getSecretsByProjectId.id,
+        );
+      if (getSecrectValueBySecrectId && getSecrectValueBySecrectId) {
+        return { getSecretsByProjectId, getSecrectValueBySecrectId };
+      }
+      return null;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Get Secrect & secrect Value by secrect_id
+  async getSecretsById(secrect_id) {
+    try {
+      const getSecretsById = await this.envSyncRepo.getSecretsById(secrect_id);
+      const getSecrectValueBySecrectId =
+        await this.envSyncRepo.getSecrectValueBySecrectId(secrect_id);
+
+      return { getSecretsById, getSecrectValueBySecrectId };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Update secrect & secrect Value by secret_id
+  async updateSecrectById(secrect_id, name, value) {
+    try {
+      const updateSecrectById = await this.envSyncRepo.updateSecretsById(
+        secrect_id,
+        name,
+      );
+      const updateSecrectValueBySecrectId =
+        await this.envSyncRepo.updateSecrectValueBySecrectId(secrect_id, value);
+      return { updateSecrectById, updateSecrectValueBySecrectId };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Delete secrect & secrect Value by Secret_id
+  async deleteSecrectById(secrect_id) {
+    try {
+      const deleteSecrectById =
+        await this.envSyncRepo.deleteSecrectById(secrect_id);
+      const deleteSecrectValueBySecrectId =
+        await this.envSyncRepo.deleteSecrectValueBySecrectId(secrect_id);
+
+      return { deleteSecrectById, deleteSecrectValueBySecrectId };
+    } catch (e) {
+      throw e;
+    }
+  }
+
   //   Creating the Environment_Secrets using the environment_id and secret_id for Join Lookup
   async newEnvironmentSecret(environment_id, secrect_id) {
     try {

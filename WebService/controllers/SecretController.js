@@ -15,13 +15,62 @@ const createSecret = async (req, res, next) => {
     next(e);
   }
 };
-
-const getSecrets = async (req, res, next) => {
+// get secrects based on project Id
+const getSecretsByProjectId = async (req, res, next) => {
   try {
-    pass;
+    const { project_id } = req.params;
+    const getSecretsByProjectId =
+      await envSyncService.getSecretsByProjectId(project_id);
+    successResponse(res, getSecretsByProjectId, 200);
   } catch (e) {
     next(e);
   }
 };
 
-export { createSecret };
+// Get secrect & Secrect Values based on the secrect_id
+
+const getSecretsBySecrectId = async (req, res, next) => {
+  try {
+    const { secret_id } = req.params;
+    const getSecretsBySecrectId =
+      await envSyncService.getSecretsById(secret_id);
+    successResponse(res, getSecretsBySecrectId, 200);
+  } catch (e) {
+    next(e);
+  }
+};
+
+// Update Secrect's by secret_id
+
+const updateSecrectById = async (req, res, next) => {
+  try {
+    const { secret_id } = req.params;
+    const { name, value } = req.body;
+    const updateSecrectById = await envSyncService.updateSecrectById(
+      secret_id,
+      name,
+      value,
+    );
+    successResponse(res, updateSecrectById, 201);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteSecrectById = async (req, res, next) => {
+  try {
+    const { secret_id } = req.params;
+    const deleteSecrectById = await envSyncService.deleteSecrectById(secret_id);
+    successResponse(res, deleteSecrectById, 201);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export {
+  createSecret,
+  getSecretsByProjectId,
+  getSecretsBySecrectId,
+  updateSecrectById,
+  deleteSecrectById,
+};

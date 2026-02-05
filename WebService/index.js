@@ -56,6 +56,7 @@ Sentry.setupExpressErrorHandler(webService);
 // Global fallback error handler AFTER Sentry handler
 webService.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
+  Sentry.captureMessage(err.message);
   res.status(statusCode).json({
     error: err.message || "Internal Server Error",
     sentry: res.sentry ?? null,

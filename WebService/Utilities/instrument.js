@@ -12,4 +12,9 @@ Sentry.init({
 
   // Send default PII (IP address etc.)
   sendDefaultPii: true,
+  integrations: [
+    Sentry.httpIntegration({
+      trackIncomingRequestsAsSessions: false, // default: true
+    }),
+  ],
 });
