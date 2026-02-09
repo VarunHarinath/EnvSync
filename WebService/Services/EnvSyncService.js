@@ -133,11 +133,12 @@ class EnvSyncService {
     try {
       const getSecretsByProjectId =
         await this.envSyncRepo.getSecretsByProjectId(project_id);
-      const getSecrectValueBySecrectId =
-        await this.envSyncRepo.getSecrectValueBySecrectId(
-          getSecretsByProjectId.id,
-        );
-      if (getSecrectValueBySecrectId && getSecrectValueBySecrectId) {
+
+      if (getSecretsByProjectId) {
+        const getSecrectValueBySecrectId =
+          await this.envSyncRepo.getSecrectValueBySecrectId(
+            getSecretsByProjectId.id,
+          );
         return { getSecretsByProjectId, getSecrectValueBySecrectId };
       }
       return null;
