@@ -253,6 +253,22 @@ class EnvSyncRepo {
     }
   }
 
+  // Get Environment Secrect by environmentSecret_id
+
+  async getEnvironmentSecretsById(environmentSecret_id) {
+    try {
+      const query = {
+        text: "SELECT es.id AS environment_secret_id,es.environment_id,s.id AS secret_id,s.name AS secret_name,sv.id AS secret_value_id,sv.value FROM environment_secrets es JOIN secrets s ON es.secret_id = s.id LEFT JOIN secret_values sv ON s.id = sv.secret_id WHERE es.id = $1",
+        values: [environmentSecret_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Creating new Environment based on the given environment_id and secrect_id
   async createEnvironmentSecrets(environment_id, secret_id) {
     try {
       const query = {
@@ -262,7 +278,40 @@ class EnvSyncRepo {
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
     } catch (e) {
-      console.error(e);
+      throw e;
+    }
+  }
+
+  // Updating Environment Secrects based on the Environment Secret ID
+
+  async updateEnvironmentSecretById(
+    environmentSecrect_id,
+    environment_id,
+    secrect_id,
+  ) {
+    try {
+      const query = {
+        text: "UPDATE environment_secrets SET environment_id = $1, secret_id = $2 WHERE id = $3 RETURNING *",
+        values: [environment_id, secrect_id, environmentSecrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Deleting the Environment Secrects Based on the Environment Secret ID
+
+  async deleteEnvironmentSecretById(environmentSecrect_id) {
+    try {
+      const query = {
+        text: "DELETE FROM environment_secrets WHERE id = $1",
+        values: [environmentSecrect_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
       throw e;
     }
   }

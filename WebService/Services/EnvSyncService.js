@@ -202,6 +202,53 @@ class EnvSyncService {
       throw e;
     }
   }
+
+  // Getting all the mapped data from the environment secret using joins and environmentSecret_id
+
+  async getEnvironmentSecretsById(environment_secret_id) {
+    try {
+      const getEnvironmentSecretsById =
+        await this.envSyncRepo.getEnvironmentSecretsById(environment_secret_id);
+      return getEnvironmentSecretsById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Update the table using the id
+
+  async updateEnvironmentSecretById(
+    environment_secret_id,
+    environment_id,
+    secrect_id,
+  ) {
+    try {
+      const updateEnvironmentSecretById =
+        await this.envSyncRepo.updateEnvironmentSecretById(
+          environment_secret_id,
+          environment_id,
+          secrect_id,
+        );
+      return updateEnvironmentSecretById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Deleting the data from the Environment Secrect Table using it's ID
+
+  async deleteEnvironmentSecretById(environment_secret_id) {
+    try {
+      const deleteEnvironmentSecretById =
+        await this.envSyncRepo.deleteEnvironmentSecretById(
+          environment_secret_id,
+        );
+      return deleteEnvironmentSecretById;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   //   Creating API Table for Environment_ID & hash_key storage
   async newApi(project_id, environment_id, key_hash, key_prefix) {
     try {
