@@ -1,19 +1,46 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-let toastIdCounter = 0;
+let listeners = [];
+let memoryState = []; // Simple global state for toast to persist across re-renders if needed, 
+// though typically context is better. For simplicity in this scope, we'll use a simple event bus pattern or just local state if used at top level.
+// Actually, let's just make a simple custom hook that dispatches custom events, 
+// and a ToastContainer that listens.
 
-export const useToast = () => {
+const TOAST_EVENT = 'envsync-toast';
+
+export function useToast() {
+  const toast = useCallback(({ title, description, variant = 'default' }) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    const event = new CustomEvent(TOAST_EVENT, {
+      detail: { id, title, description, variant },
+    });
+    window.dispatchEvent(event);
+  }, []);
+
+  return { toast };
+}
+
+export function useToastListener() {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = useCallback((message, type = 'error') => {
-    const id = ++toastIdCounter;
-    setToasts((prev) => [...prev, { id, message, type }]);
-    return id;
+  useEffect(() => {
+    const handler = (event) => {
+      const newToast = event.detail;
+      setToasts((prev) => [...prev, newToast]);
+      
+      // Auto dismiss
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== newToast.id));
+      }, 3000);
+    };
+
+    window.addEventListener(TOAST_EVENT, handler);
+    return () => window.removeEventListener(TOAST_EVENT, handler);
   }, []);
 
-  const removeToast = useCallback((id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
+  const removeToast = (id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
 
-  return { toasts, addToast, removeToast };
-};
+  return { toasts, removeToast };
+}

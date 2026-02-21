@@ -1,175 +1,152 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSecrets, useCreateSecret } from '../hooks/useSecrets.js';
-import { getActiveProject } from '../utils/storage.js';
-import { LoadingSpinner } from '../components/LoadingSpinner.jsx';
-import { ErrorState } from '../components/ErrorState.jsx';
-import { EmptyState } from '../components/EmptyState.jsx';
-import { Plus, Lock, Eye, EyeOff } from 'lucide-react';
-import { useToastContext } from '../contexts/ToastContext.jsx';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { secretsApi } from '../api/secrets';
+import { useFetch } from '../hooks/useFetch';
+import { useToast } from '../hooks/useToast';
+import Table from '../components/common/Table';
+import Button from '../components/common/Button';
+import Modal from '../components/common/Modal';
+import Input from '../components/common/Input';
+import EmptyState from '../components/common/EmptyState';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { Plus, Eye, EyeOff, Copy, Trash2, Lock } from 'lucide-react';
 
-export const Secrets = () => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [secretName, setSecretName] = useState('');
-  const [secretValue, setSecretValue] = useState('');
-  const [showValue, setShowValue] = useState(false);
-  const [activeProject, setActiveProject] = useState(null);
-  const navigate = useNavigate();
+const SecretValue = ({ value }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const project = getActiveProject();
-    if (!project) {
-      navigate('/projects');
-      return;
-    }
-    setActiveProject(project);
-  }, [navigate]);
-
-  const { data: secrets = [], isLoading, error, refetch } = useSecrets(activeProject?.id);
-  const createSecret = useCreateSecret();
-  const { addToast } = useToastContext();
-
-  const handleCreateSecret = async (e) => {
-    e.preventDefault();
-    if (!secretName.trim() || !secretValue.trim()) return;
-
-    try {
-      await createSecret.mutateAsync({
-        projectId: activeProject.id,
-        secretName: secretName.trim(),
-        secretValue: secretValue.trim(),
-      });
-      setSecretName('');
-      setSecretValue('');
-      setShowCreateForm(false);
-      addToast('Secret created successfully', 'success');
-    } catch (err) {
-      addToast(err?.message || 'Failed to create secret', 'error');
-    }
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
+    toast({ title: 'Copied', description: 'Secret copied to clipboard.' });
   };
 
-  if (!activeProject) {
-    return null; // Will redirect
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <ErrorState message={error.message} onRetry={refetch} />;
-  }
-
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-2xl font-semibold text-white mb-1">Secrets</h2>
-          <p className="text-sm text-[#a1a1aa]">Project: {activeProject.name}</p>
-        </div>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-[#0a0a0a] rounded-md hover:bg-[#e4e4e7] transition-colors font-medium text-sm"
-        >
-          <Plus size={16} />
-          New Secret
-        </button>
-      </div>
-
-      {showCreateForm && (
-        <div className="mb-6 p-5 bg-[#18181b] border border-[#27272a] rounded-lg">
-          <form onSubmit={handleCreateSecret} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-[#e4e4e7] mb-2">
-                Secret Name
-              </label>
-              <input
-                type="text"
-                value={secretName}
-                onChange={(e) => setSecretName(e.target.value)}
-                placeholder="SECRET_KEY"
-                className="w-full px-4 py-2.5 bg-[#27272a] border border-[#3f3f46] rounded-md text-white placeholder-[#71717a] focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-[#52525b]"
-                autoFocus
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#e4e4e7] mb-2">
-                Secret Value
-              </label>
-              <div className="relative">
-                <input
-                  type={showValue ? 'text' : 'password'}
-                  value={secretValue}
-                  onChange={(e) => setSecretValue(e.target.value)}
-                  placeholder="your-secret-value"
-                  className="w-full px-4 py-2.5 pr-10 bg-[#27272a] border border-[#3f3f46] rounded-md text-white placeholder-[#71717a] focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-[#52525b]"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowValue(!showValue)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[#a1a1aa] hover:text-white transition-colors"
-                >
-                  {showValue ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={createSecret.isPending || !secretName.trim() || !secretValue.trim()}
-                className="px-4 py-2.5 bg-white text-[#0a0a0a] rounded-md hover:bg-[#e4e4e7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm"
-              >
-                {createSecret.isPending ? 'Creating...' : 'Create'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateForm(false);
-                  setSecretName('');
-                  setSecretValue('');
-                }}
-                className="px-4 py-2.5 bg-[#27272a] text-[#e4e4e7] border border-[#3f3f46] rounded-md hover:bg-[#3f3f46] transition-colors font-medium text-sm"
-              >
-                Cancel
-              </button>
-            </div>
-            {createSecret.isError && (
-              <p className="text-sm text-red-400">{createSecret.error.message}</p>
-            )}
-          </form>
-        </div>
-      )}
-
-      {secrets.length === 0 ? (
-        <EmptyState
-          message="No secrets yet. Create your first secret to get started."
-          actionLabel="Create Secret"
-          onAction={() => setShowCreateForm(true)}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {secrets.map((secret) => (
-            <div
-              key={secret.id}
-              className="p-5 bg-[#18181b] border border-[#27272a] rounded-lg hover:border-[#3f3f46] hover:bg-[#27272a] transition-all"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-[#27272a] rounded-md">
-                  <Lock className="text-white" size={18} />
-                </div>
-                <h3 className="font-semibold text-white">{secret.name}</h3>
-              </div>
-              <p className="text-xs text-[#71717a]">
-                Created {new Date(secret.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="flex items-center gap-2 group">
+      <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
+        {isVisible ? value : '••••••••••••••••'}
+      </code>
+      <button onClick={() => setIsVisible(!isVisible)} className="text-muted-foreground hover:text-foreground">
+        {isVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+      <button onClick={handleCopy} className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+        <Copy className="h-4 w-4" />
+      </button>
     </div>
   );
 };
+
+export default function Secrets() {
+  const { projectId } = useParams();
+  const { toast } = useToast();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', value: '' });
+  const [isCreating, setIsCreating] = useState(false);
+
+  // Fetch
+  const fetchSecrets = () => secretsApi.getByProject(projectId);
+  const { data, isLoading, refetch } = useFetch(fetchSecrets, [projectId]);
+  const secrets = data || [];
+
+  const handleCreate = async () => {
+    if (!form.name || !form.value) return;
+    setIsCreating(true);
+    try {
+      await secretsApi.create(projectId, form.name, form.value);
+      toast({ title: 'Success', description: 'Secret created.' });
+      setIsModalOpen(false);
+      setForm({ name: '', value: '' });
+      refetch();
+    } catch (e) {
+      toast({ title: 'Error', variant: 'destructive' });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this secret?')) return;
+    try {
+        await secretsApi.delete(id);
+        toast({ title: 'Deleted', description: 'Secret deleted.' });
+        refetch();
+    } catch (e) {
+        toast({ title: 'Error', variant: 'destructive' });
+    }
+  };
+
+  const columns = [
+    { header: 'Key', accessorKey: 'name', className: 'font-medium font-mono text-xs' },
+    { header: 'Value', render: (row) => <SecretValue value={row.value || '******'} /> },
+    { header: 'Updated', accessorKey: 'updated_at', render: (row) => new Date(row.updated_at).toLocaleDateString() },
+    { 
+        header: '', 
+        className: 'w-[50px]',
+        render: (row) => (
+            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(row.id)}>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+        )
+    }
+  ];
+
+  if (isLoading) return <div className="p-12 flex justify-center"><LoadingSpinner /></div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Secrets</h1>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> New Secret
+        </Button>
+      </div>
+
+      <div className="rounded-md border bg-card">
+         {secrets.length === 0 ? (
+             <EmptyState
+                icon={Lock}
+                title="No secrets yet"
+                description="Securely store environment variables."
+                actionLabel="Add Secret"
+                onAction={() => setIsModalOpen(true)}
+             />
+         ) : (
+            <Table columns={columns} data={secrets} />
+         )}
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="New Secret"
+        footer={
+           <>
+             <Button variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+             <Button onClick={handleCreate} isLoading={isCreating}>Add Secret</Button>
+           </>
+        }
+      >
+        <div className="space-y-4">
+             <div className="space-y-2">
+                <label className="text-sm font-medium">Key Name</label>
+                <Input 
+                    placeholder="e.g. DATABASE_URL" 
+                    value={form.name}
+                    onChange={(e) => setForm({...form, name: e.target.value.toUpperCase()})}
+                    autoFocus
+                />
+                <p className="text-xs text-muted-foreground">Constants are usually UPPERCASE.</p>
+             </div>
+             <div className="space-y-2">
+                <label className="text-sm font-medium">Value</label>
+                <Input 
+                    placeholder="Value..." 
+                    type="password"
+                    value={form.value}
+                    onChange={(e) => setForm({...form, value: e.target.value})}
+                />
+             </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}

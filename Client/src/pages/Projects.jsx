@@ -1,133 +1,115 @@
-import { useState, useEffect } from 'react';
-import { useProjects, useCreateProject } from '../hooks/useProjects.js';
-import { LoadingSpinner } from '../components/LoadingSpinner.jsx';
-import { ErrorState } from '../components/ErrorState.jsx';
-import { EmptyState } from '../components/EmptyState.jsx';
-import { Plus, FolderKanban } from 'lucide-react';
-import { setActiveProject } from '../utils/storage.js';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToastContext } from '../contexts/ToastContext.jsx';
+import { Plus, Trash2, Eye } from 'lucide-react';
+import { projectsApi } from '../api/projects'; // Ensure this path is correct
+import { useFetch } from '../hooks/useFetch';
+import { useToast } from '../hooks/useToast';
+import Table from '../components/common/Table';
+import Button from '../components/common/Button';
+import Modal from '../components/common/Modal';
+import Input from '../components/common/Input';
+import EmptyState from '../components/common/EmptyState';
 
-export const Projects = () => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [projectName, setProjectName] = useState('');
-  const { data: projects = [], isLoading, error, refetch } = useProjects();
-  const createProject = useCreateProject();
+
+export default function Projects() {
   const navigate = useNavigate();
-  const { addToast } = useToastContext();
+  const { toast } = useToast();
+  const [iscreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleCreateProject = async (e) => {
-    e.preventDefault();
-    if (!projectName.trim()) return;
+  // Fetch Projects
+  const fetchProjects = useCallback(() => projectsApi.getAll(), []);
+  const { data: projects, isLoading, refetch } = useFetch(fetchProjects, []);
 
+  const handleCreateProject = async () => {
+    if (!newProjectName.trim()) return;
+    setIsCreating(true);
     try {
-      const newProject = await createProject.mutateAsync({ name: projectName.trim() });
-      setProjectName('');
-      setShowCreateForm(false);
-      addToast('Project created successfully', 'success');
-      // Auto-select the new project
-      setActiveProject(newProject.id, newProject.name);
-      navigate('/environments');
-    } catch (err) {
-      addToast(err?.message || 'Failed to create project', 'error');
+        await projectsApi.create(newProjectName);
+        toast({ title: 'Success', description: 'Project created successfully.' });
+        setIsCreateModalOpen(false);
+        setNewProjectName('');
+        refetch();
+    } catch (error) {
+        toast({ title: 'Error', description: 'Failed to create project.', variant: 'destructive' });
+    } finally {
+        setIsCreating(false);
     }
   };
 
-  const handleSelectProject = (project) => {
-    setActiveProject(project.id, project.name);
-    navigate('/environments');
+  const handleDeleteProject = async (e, id) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this project?')) return;
+    try {
+        await projectsApi.delete(id);
+        toast({ title: 'Deleted', description: 'Project deleted.' });
+        refetch();
+    } catch (error) {
+        toast({ title: 'Error', variant: 'destructive' });
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <ErrorState message={error.message} onRetry={refetch} />;
-  }
+  const columns = [
+    { header: 'Project Name', accessorKey: 'name', className: 'font-medium' },
+    { header: 'Created At', accessorKey: 'created_at', render: (row) => new Date(row.created_at).toLocaleDateString() },
+    { 
+        header: 'Actions', 
+        className: 'w-[100px]',
+        render: (row) => (
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${row.id}`); }}>
+                    <Eye className="h-4 w-4" />
+                </Button>
+                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => handleDeleteProject(e, row.id)}>
+                    <Trash2 className="h-4 w-4" />
+                </Button>
+            </div>
+        )
+    }
+  ];
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-2xl font-semibold text-white mb-1">Projects</h2>
-          <p className="text-sm text-[#a1a1aa]">Manage your projects and environments</p>
-        </div>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-[#0a0a0a] rounded-md hover:bg-[#e4e4e7] transition-colors font-medium text-sm"
-        >
-          <Plus size={16} />
-          New Project
-        </button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> New Project
+        </Button>
       </div>
 
-      {showCreateForm && (
-        <div className="mb-6 p-5 bg-[#18181b] border border-[#27272a] rounded-lg">
-          <form onSubmit={handleCreateProject} className="flex gap-3">
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder="Project name"
-              className="flex-1 px-4 py-2.5 bg-[#27272a] border border-[#3f3f46] rounded-md text-white placeholder-[#71717a] focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-[#52525b]"
-              autoFocus
-            />
-            <button
-              type="submit"
-              disabled={createProject.isPending || !projectName.trim()}
-              className="px-4 py-2.5 bg-white text-[#0a0a0a] rounded-md hover:bg-[#e4e4e7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm"
-            >
-              {createProject.isPending ? 'Creating...' : 'Create'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowCreateForm(false);
-                setProjectName('');
-              }}
-              className="px-4 py-2.5 bg-[#27272a] text-[#e4e4e7] border border-[#3f3f46] rounded-md hover:bg-[#3f3f46] transition-colors font-medium text-sm"
-            >
-              Cancel
-            </button>
-          </form>
-          {createProject.isError && (
-            <p className="mt-3 text-sm text-red-400">{createProject.error.message}</p>
-          )}
-        </div>
-      )}
+      <div className="rounded-md border bg-card">
+         <Table 
+            columns={columns} 
+            data={projects} 
+            isLoading={isLoading} 
+            onRowClick={(row) => navigate(`/projects/${row.id}`)}
+         />
+      </div>
 
-      {projects.length === 0 ? (
-        <EmptyState
-          message="No projects yet. Create your first project to get started."
-          actionLabel="Create Project"
-          onAction={() => setShowCreateForm(true)}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <button
-              key={project.id}
-              onClick={() => handleSelectProject(project)}
-              className="p-5 bg-[#18181b] border border-[#27272a] rounded-lg hover:border-[#3f3f46] hover:bg-[#27272a] transition-all text-left group"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-[#27272a] rounded-md group-hover:bg-[#3f3f46] transition-colors">
-                  <FolderKanban className="text-white" size={20} />
-                </div>
-                <h3 className="text-base font-semibold text-white">{project.name}</h3>
-              </div>
-              <p className="text-xs text-[#71717a]">
-                Created {new Date(project.created_at).toLocaleDateString()}
-              </p>
-            </button>
-          ))}
+      <Modal
+        isOpen={iscreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title="Create New Project"
+        footer={
+            <>
+                <Button variant="ghost" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleCreateProject} isLoading={isCreating}>Create Project</Button>
+            </>
+        }
+      >
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <label className="text-sm font-medium">Project Name</label>
+                <Input 
+                    placeholder="e.g. My Awesome App" 
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    autoFocus
+                />
+            </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
-};
+}
