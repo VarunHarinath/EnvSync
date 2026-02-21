@@ -92,11 +92,17 @@ class EnvSyncRepo {
   async getEnvironmentsById(project_id) {
     try {
       const query = {
-        text: "SELECT * FROM environments WHERE project_id = $1",
+        text: `
+          SELECT e.*, COUNT(es.id) AS secrets_count 
+          FROM environments e 
+          LEFT JOIN environment_secrets es ON e.id = es.environment_id 
+          WHERE e.project_id = $1 
+          GROUP BY e.id
+        `,
         values: [project_id],
       };
       const result = await db.dbQuery(query.text, query.values);
-      return result.rows[0];
+      return result.rows;
     } catch (e) {
       throw e;
     }
@@ -147,16 +153,16 @@ class EnvSyncRepo {
   async getSecretsByProjectId(project_id) {
     try {
       const query = {
-        text: "SELECT * FROM secrets WHERE project_id = $1",
+        text: "SELECT s.*, sv.value FROM secrets s LEFT JOIN secret_values sv ON s.id = sv.secret_id WHERE s.project_id = $1",
         values: [project_id],
       };
       const result = await db.dbQuery(query.text, query.values);
-      return result.rows[0];
-    } catch {
+      return result.rows;
+    } catch (e) {
       throw e;
     }
   }
-  // Get Secrects by Project_id
+  // Get Secrects by id
   async getSecretsById(secrect_id) {
     try {
       const query = {
@@ -255,14 +261,14 @@ class EnvSyncRepo {
 
   // Get Environment Secrect by environmentSecret_id
 
-  async getEnvironmentSecretsById(environmentSecret_id) {
+  async getEnvironmentSecretsById(environment_id) {
     try {
       const query = {
-        text: "SELECT es.id AS environment_secret_id,es.environment_id,s.id AS secret_id,s.name AS secret_name,sv.id AS secret_value_id,sv.value FROM environment_secrets es JOIN secrets s ON es.secret_id = s.id LEFT JOIN secret_values sv ON s.id = sv.secret_id WHERE es.id = $1",
-        values: [environmentSecret_id],
+        text: "SELECT es.id AS environment_secret_id,es.environment_id,s.id AS secret_id,s.name AS secret_name,sv.id AS secret_value_id,sv.value FROM environment_secrets es JOIN secrets s ON es.secret_id = s.id LEFT JOIN secret_values sv ON s.id = sv.secret_id WHERE es.environment_id = $1",
+        values: [environment_id],
       };
       const result = await db.dbQuery(query.text, query.values);
-      return result.rows[0];
+      return result.rows;
     } catch (e) {
       throw e;
     }

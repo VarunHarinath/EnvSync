@@ -20,9 +20,9 @@ const createEnvironmentSecret = async (req, res, next) => {
 
 const getEnvironmentSecretsById = async (req, res, next) => {
   try {
-    const { environment_secret_id } = req.params;
+    const { environment_id } = req.params;
     const getEnvironmentSecretsById =
-      await envSyncService.getEnvironmentSecretsById(environment_secret_id);
+      await envSyncService.getEnvironmentSecretsById(environment_id);
     successResponse(res, getEnvironmentSecretsById, 200);
   } catch (e) {
     next(e);

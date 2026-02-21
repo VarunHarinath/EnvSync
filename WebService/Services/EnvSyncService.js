@@ -128,20 +128,11 @@ class EnvSyncService {
   }
 
   // getSecrets based on the project_id
-
   async getSecretsByProjectId(project_id) {
     try {
       const getSecretsByProjectId =
         await this.envSyncRepo.getSecretsByProjectId(project_id);
-
-      if (getSecretsByProjectId) {
-        const getSecrectValueBySecrectId =
-          await this.envSyncRepo.getSecrectValueBySecrectId(
-            getSecretsByProjectId.id,
-          );
-        return { getSecretsByProjectId, getSecrectValueBySecrectId };
-      }
-      return null;
+      return getSecretsByProjectId;
     } catch (e) {
       throw e;
     }
@@ -205,10 +196,10 @@ class EnvSyncService {
 
   // Getting all the mapped data from the environment secret using joins and environmentSecret_id
 
-  async getEnvironmentSecretsById(environment_secret_id) {
+  async getEnvironmentSecretsById(environment_id) {
     try {
       const getEnvironmentSecretsById =
-        await this.envSyncRepo.getEnvironmentSecretsById(environment_secret_id);
+        await this.envSyncRepo.getEnvironmentSecretsById(environment_id);
       return getEnvironmentSecretsById;
     } catch (e) {
       throw e;

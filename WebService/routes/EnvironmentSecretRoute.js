@@ -10,7 +10,7 @@ const environmentSecretoute = Router();
 
 environmentSecretoute.post("/", createEnvironmentSecret);
 environmentSecretoute.get(
-  "/getEnvironmentSecretsById/:environment_secret_id",
+  "/getEnvironmentSecretsById/:environment_id",
   getEnvironmentSecretsById,
 );
 environmentSecretoute.patch(
