@@ -1,16 +1,16 @@
 import React from 'react';
-import { Search, Bell, Plus } from 'lucide-react';
+import { Search, Bell, Plus, Moon, Sun } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import Input from '../common/Input';
 import Button from '../common/Button';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function Topbar() {
-  // Use projectId to mock the "Current Project" display.
-  // In a real app we'd fetch project details.
   const { projectId } = useParams();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="h-14 border-b bg-card flex items-center justify-between px-6 sticky top-0 z-10">
+    <header className="h-14 border-b bg-card flex items-center justify-between px-6 sticky top-0 z-10 transition-colors">
       <div className="flex items-center gap-4 flex-1">
         {/* Breadcrumb / Project Switcher Placeholder */}
         <div className="flex items-center gap-2 text-sm">
@@ -38,6 +38,13 @@ export default function Topbar() {
       </div>
 
       <div className="flex items-center gap-4">
+        <button 
+          onClick={toggleTheme}
+          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </button>
         <button className="text-muted-foreground hover:text-foreground">
           <Bell className="h-5 w-5" />
         </button>

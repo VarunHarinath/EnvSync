@@ -10,7 +10,7 @@ import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import Drawer from '../components/common/Drawer';
 import Input from '../components/common/Input';
-import { Plus, Trash2, Lock } from 'lucide-react';
+import { Plus, Trash2, Lock, Edit2 } from 'lucide-react';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { cn } from '../utils';
@@ -19,9 +19,11 @@ export default function Environments() {
   const { projectId } = useParams();
   const { toast } = useToast();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEnv, setSelectedEnv] = useState(null);
   const [newEnvName, setNewEnvName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch Envs
   const fetchEnvs = () => environmentsApi.getByProject(projectId);
@@ -55,6 +57,51 @@ export default function Environments() {
       setIsCreateModalOpen(true);
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const handleUpdateEnv = async () => {
+    if (!newEnvName.trim() || !selectedEnv) return;
+    setIsUpdating(true);
+    
+    const originalEnv = { ...selectedEnv };
+    const newName = newEnvName;
+
+    // Optimistic Update
+    setEnvironments(prev => prev.map(e => e.id === selectedEnv.id ? { ...e, name: newName } : e));
+    setSelectedEnv(prev => ({ ...prev, name: newName }));
+    setIsEditModalOpen(false);
+
+    try {
+      await environmentsApi.update(selectedEnv.id, newName);
+      toast({ title: 'Updated', description: 'Environment name updated.' });
+      await refetch(true);
+    } catch (e) {
+      // Rollback
+      setEnvironments(prev => prev.map(e => e.id === originalEnv.id ? originalEnv : e));
+      setSelectedEnv(originalEnv);
+      toast({ title: 'Error', description: 'Failed to update environment.', variant: 'destructive' });
+      setNewEnvName(newName);
+      setIsEditModalOpen(true);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const openEditModal = () => {
+    setNewEnvName(selectedEnv.name);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteEnv = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this environment?')) return;
+    try {
+        await environmentsApi.delete(id);
+        toast({ title: 'Deleted', description: 'Environment deleted.' });
+        setSelectedEnv(null);
+        refetch();
+    } catch (e) {
+        toast({ title: 'Error', variant: 'destructive' });
     }
   };
 
@@ -248,7 +295,20 @@ export default function Environments() {
       <Drawer
         isOpen={!!selectedEnv}
         onClose={() => setSelectedEnv(null)}
-        title={selectedEnv?.name || 'Environment Details'}
+        title={
+          <div className="flex items-center gap-2">
+            <span>{selectedEnv?.name || 'Environment Details'}</span>
+            {selectedEnv && !String(selectedEnv.id).startsWith('temp-') && (
+              <button 
+                onClick={openEditModal}
+                className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                title="Rename Environment"
+              >
+                <Edit2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        }
       >
         {selectedEnv && (
             <div className="space-y-6">
@@ -317,7 +377,11 @@ export default function Environments() {
                 </div>
                 
                  <div className="pt-4 border-t">
-                    <Button variant="ghost" className="w-full text-destructive hover:bg-destructive/10">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full text-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteEnv(selectedEnv.id)}
+                    >
                         <Trash2 className="mr-2 h-4 w-4" /> Delete Environment
                     </Button>
                 </div>
@@ -391,6 +455,29 @@ export default function Environments() {
                   </div>
               )}
           </div>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Rename Environment"
+        footer={
+           <>
+             <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+             <Button onClick={handleUpdateEnv} isLoading={isUpdating}>Save Changes</Button>
+           </>
+        }
+      >
+        <div className="space-y-4">
+            <label className="text-sm font-medium">New Environment Name</label>
+            <Input 
+                placeholder="e.g. Production"
+                value={newEnvName}
+                onChange={(e) => setNewEnvName(e.target.value)} 
+                autoFocus
+            />
+        </div>
       </Modal>
     </div>
   );

@@ -62,11 +62,13 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 border-r bg-card flex flex-col hidden md:flex h-screen sticky top-0">
+    <aside className="w-64 border-r bg-card flex flex-col hidden md:flex h-screen sticky top-0 transition-colors">
       <div className="h-14 flex items-center px-6 border-b">
-        <NavLink to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-          <Hexagon className="h-6 w-6 font-bold" />
-          <span>EnvSync</span>
+        <NavLink to="/" className="flex items-center gap-2.5 group">
+          <div className="w-7 h-7 bg-gradient-to-tr from-purple-600 to-blue-500 rounded flex items-center justify-center shadow-lg shadow-purple-500/10 group-hover:scale-110 transition-transform">
+            <Lock className="h-3.5 w-3.5 text-white" />
+          </div>
+          <span className="text-lg font-bold tracking-tight text-foreground">EnvSync</span>
         </NavLink>
       </div>
 
@@ -95,13 +97,13 @@ export default function Sidebar() {
         )}
       </nav>
 
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-muted/10">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
             JD
           </div>
           <div className="text-sm">
-            <p className="font-medium">John Doe</p>
+            <p className="font-medium text-foreground">John Doe</p>
             <p className="text-xs text-muted-foreground">admin@envsync.com</p>
           </div>
         </div>

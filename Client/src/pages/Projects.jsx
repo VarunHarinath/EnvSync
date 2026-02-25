@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Eye } from 'lucide-react';
+import { Plus, Trash2, Eye, Edit2 } from 'lucide-react';
 import { projectsApi } from '../api/projects'; // Ensure this path is correct
 import { useFetch } from '../hooks/useFetch';
 import { useToast } from '../hooks/useToast';
@@ -15,8 +15,11 @@ export default function Projects() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [iscreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
   const [newProjectName, setNewProjectName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch Projects
   const fetchProjects = useCallback(() => projectsApi.getAll(), []);
@@ -39,6 +42,30 @@ export default function Projects() {
     }
   };
 
+  const handleUpdateProject = async () => {
+    if (!newProjectName.trim() || !editingProject) return;
+    setIsUpdating(true);
+    try {
+        await projectsApi.update(editingProject.id, newProjectName);
+        toast({ title: 'Updated', description: 'Project name updated.' });
+        setIsEditModalOpen(false);
+        setNewProjectName('');
+        setEditingProject(null);
+        refetch();
+    } catch (error) {
+        toast({ title: 'Error', description: 'Failed to update project.', variant: 'destructive' });
+    } finally {
+        setIsUpdating(false);
+    }
+  };
+
+  const openEditModal = (e, project) => {
+    e.stopPropagation();
+    setEditingProject(project);
+    setNewProjectName(project.name);
+    setIsEditModalOpen(true);
+  };
+
   const handleDeleteProject = async (e, id) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this project?')) return;
@@ -56,11 +83,19 @@ export default function Projects() {
     { header: 'Created At', accessorKey: 'created_at', render: (row) => new Date(row.created_at).toLocaleDateString() },
     { 
         header: 'Actions', 
-        className: 'w-[100px]',
+        className: 'w-[120px]',
         render: (row) => (
             <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${row.id}`); }}>
                     <Eye className="h-4 w-4" />
+                </Button>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={(e) => openEditModal(e, row)}
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-950/30"
+                >
+                    <Edit2 className="h-4 w-4" />
                 </Button>
                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => handleDeleteProject(e, row.id)}>
                     <Trash2 className="h-4 w-4" />
@@ -74,7 +109,7 @@ export default function Projects() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
+        <Button onClick={() => { setNewProjectName(''); setIsCreateModalOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" /> New Project
         </Button>
       </div>
@@ -88,6 +123,7 @@ export default function Projects() {
          />
       </div>
 
+      {/* Create Modal */}
       <Modal
         isOpen={iscreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -102,6 +138,31 @@ export default function Projects() {
         <div className="space-y-4">
             <div className="space-y-2">
                 <label className="text-sm font-medium">Project Name</label>
+                <Input 
+                    placeholder="e.g. My Awesome App" 
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    autoFocus
+                />
+            </div>
+        </div>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Rename Project"
+        footer={
+            <>
+                <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleUpdateProject} isLoading={isUpdating}>Save Changes</Button>
+            </>
+        }
+      >
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <label className="text-sm font-medium">New Project Name</label>
                 <Input 
                     placeholder="e.g. My Awesome App" 
                     value={newProjectName}

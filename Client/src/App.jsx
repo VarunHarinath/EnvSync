@@ -10,28 +10,32 @@ import APIKeys from './pages/APIKeys';
 import AuditLogs from './pages/AuditLogs';
 import Settings from './pages/Settings';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Landing Page */}
-        <Route path="/" element={<Landing />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
 
-        {/* Console / Dashboard Routes with Sidebar/Topbar */}
-        <Route element={<AppShell />}>
-           <Route path="/projects" element={<Projects />} />
-           <Route path="/projects/:projectId" element={<ProjectDetail />} />
-           <Route path="/projects/:projectId/environments" element={<Environments />} />
-           <Route path="/projects/:projectId/secrets" element={<Secrets />} />
-           <Route path="/projects/:projectId/api-keys" element={<APIKeys />} />
-           
-           <Route path="/audit-logs" element={<AuditLogs />} />
-           <Route path="/settings" element={<Settings />} />
-        </Route>
-        
-        {/* Catch-all redirect to Landing */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Console / Dashboard Routes with Sidebar/Topbar */}
+          <Route element={<AppShell />}>
+             <Route path="/projects" element={<Projects />} />
+             <Route path="/projects/:projectId" element={<ProjectDetail />} />
+             <Route path="/projects/:projectId/environments" element={<Environments />} />
+             <Route path="/projects/:projectId/secrets" element={<Secrets />} />
+             <Route path="/projects/:projectId/api-keys" element={<APIKeys />} />
+             
+             <Route path="/audit-logs" element={<AuditLogs />} />
+             <Route path="/settings" element={<Settings />} />
+          </Route>
+          
+          {/* Catch-all redirect to Landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
