@@ -2,7 +2,7 @@ import { client } from './client';
 
 export const secretsApi = {
   getByProject: async (projectId) => {
-    const data = await client(`/secret/getSecrectsByProjectId/${projectId}`);
+    const data = await client(`/secret/getSecretsByProjectId/${projectId}`);
     // Backend now returns an array of secrets with joined values
     return data || [];
   },

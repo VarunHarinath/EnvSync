@@ -20,7 +20,8 @@ export default function Projects() {
 
   // Fetch Projects
   const fetchProjects = useCallback(() => projectsApi.getAll(), []);
-  const { data: projects, isLoading, refetch } = useFetch(fetchProjects, []);
+  const { data, isLoading, refetch } = useFetch(fetchProjects, []);
+  const projects = data || [];
 
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) return;

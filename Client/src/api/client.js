@@ -137,12 +137,12 @@ function handleMockRequest(endpoint, config) {
   }
 
   // --- SECRETS ---
-  if (endpoint.match(/^\/secret\/getSecrectsByProjectId\/[^/]+$/) && method === 'GET') {
+  if (endpoint.match(/^\/secret\/getSecretsByProjectId\/[^/]+$/) && method === 'GET') {
       const projectId = endpoint.split('/').pop();
       const secrets = MOCK_DB.secrets.filter(s => s.project_id === projectId);
       return { 
           getSecretsByProjectId: secrets,
-          getSecrectValueBySecrectId: secrets.map(s => ({ secret_id: s.id, value: s.value })) 
+          getSecretValueBySecretId: secrets.map(s => ({ secret_id: s.id, value: s.value })) 
       };
   }
   

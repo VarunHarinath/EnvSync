@@ -17,11 +17,8 @@ export default function Table({
     );
   }
 
-  if (!data || data.length === 0) {
-     // Let parent handle empty state usually, but we could render a default one if needed.
-     // For now, render table with no rows? Or just return null?
-     // Better to render the header at least.
-  }
+  // Defensive check for null or undefined data
+  const tableData = data || [];
 
   return (
     <div className={cn("w-full overflow-auto rounded-lg border bg-card text-card-foreground shadow-sm", className)}>
@@ -42,8 +39,8 @@ export default function Table({
           </tr>
         </thead>
         <tbody className="[&_tr:last-child]:border-0">
-          {data.length > 0 ? (
-            data.map((row, rowIdx) => (
+          {tableData.length > 0 ? (
+            tableData.map((row, rowIdx) => (
               <tr
                 key={row.id || rowIdx}
                 onClick={() => onRowClick && onRowClick(row)}
