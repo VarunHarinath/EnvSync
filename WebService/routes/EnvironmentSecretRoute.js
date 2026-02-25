@@ -6,20 +6,20 @@ import {
   deleteEnvironmentSecretById,
 } from "../controllers/EnvironmentSecretController.js";
 
-const environmentSecretoute = Router();
+const environmentSecretRoute = Router();
 
-environmentSecretoute.post("/", createEnvironmentSecret);
-environmentSecretoute.get(
+environmentSecretRoute.post("/", createEnvironmentSecret);
+environmentSecretRoute.get(
   "/getEnvironmentSecretsById/:environment_id",
   getEnvironmentSecretsById,
 );
-environmentSecretoute.patch(
+environmentSecretRoute.patch(
   "/updateEnvironmentSecretById/:environment_secret_id",
   updateEnvironmentSecretById,
 );
-environmentSecretoute.delete(
+environmentSecretRoute.delete(
   "/deleteEnvironmentSecretById/:environment_secret_id",
   deleteEnvironmentSecretById,
 );
 
-export { environmentSecretoute };
+export { environmentSecretRoute };

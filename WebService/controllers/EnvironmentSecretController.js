@@ -29,7 +29,7 @@ const getEnvironmentSecretsById = async (req, res, next) => {
   }
 };
 
-// Update the environment ecret using it's id
+// Update the environment secret using it's id
 
 const updateEnvironmentSecretById = async (req, res, next) => {
   try {
@@ -47,14 +47,14 @@ const updateEnvironmentSecretById = async (req, res, next) => {
   }
 };
 
-// Delete the Environment Secrect Based on it's ID
+// Delete the Environment Secret Based on it's ID
 
 const deleteEnvironmentSecretById = async (req, res, next) => {
   try {
     const { environment_secret_id } = req.params;
-    const deleteEnvironmentSecretById =
+    const result =
       await envSyncService.deleteEnvironmentSecretById(environment_secret_id);
-    successResponse(res, deleteEnvironmentSecretById, 201);
+    successResponse(res, result, 201);
   } catch (e) {
     next(e);
   }

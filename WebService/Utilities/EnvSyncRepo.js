@@ -135,7 +135,7 @@ class EnvSyncRepo {
       throw e;
     }
   }
-  // Creating secrects by project_id
+  // Creating secrets by project_id
   async createSecrets(project_id, name) {
     try {
       const query = {
@@ -162,12 +162,12 @@ class EnvSyncRepo {
       throw e;
     }
   }
-  // Get Secrects by id
-  async getSecretsById(secrect_id) {
+  // Get Secrets by id
+  async getSecretsById(secret_id) {
     try {
       const query = {
         text: "SELECT * FROM secrets WHERE id = $1",
-        values: [secrect_id],
+        values: [secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -175,12 +175,12 @@ class EnvSyncRepo {
       throw e;
     }
   }
-  // update Secrets by secrect_id
-  async updateSecretsById(secrect_id, name) {
+  // update Secrets by secret_id
+  async updateSecretsById(secret_id, name) {
     try {
       const query = {
         text: "UPDATE secrets SET name = $1,updated_at = NOW() WHERE id = $2 RETURNING *",
-        values: [name, secrect_id],
+        values: [name, secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -189,16 +189,104 @@ class EnvSyncRepo {
     }
   }
 
-  // delete Secrets by secrect_id
-  async deleteSecrectById(secrect_id) {
+  // delete Secret by Id
+  // delete Secret by Id
+  async deleteSecretById(secret_id) {
     try {
       const query = {
-        text: "DELETE FROM secrets WHERE id = $1",
-        values: [secrect_id],
+        text: "DELETE FROM secrets WHERE id = $1 RETURNING *",
+        values: [secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
     } catch (e) {
+      throw e;
+    }
+  }
+
+  // Transaction Support
+  async beginTransaction() {
+    await db.dbQuery("BEGIN");
+  }
+
+  async commitTransaction() {
+    await db.dbQuery("COMMIT");
+  }
+
+  async rollbackTransaction() {
+    await db.dbQuery("ROLLBACK");
+  }
+
+  // Atomic Secret Creation
+  async createSecretAtomic(project_id, name, value) {
+    try {
+      await this.beginTransaction();
+      
+      const secretQuery = {
+        text: "INSERT INTO secrets(project_id, name) VALUES($1, $2) RETURNING *",
+        values: [project_id, name]
+      };
+      const secretResult = await db.dbQuery(secretQuery.text, secretQuery.values);
+      const secret = secretResult.rows[0];
+
+      const valueQuery = {
+        text: "INSERT INTO secret_values(secret_id, value) VALUES($1, $2) RETURNING *",
+        values: [secret.id, value]
+      };
+      const valueResult = await db.dbQuery(valueQuery.text, valueQuery.values);
+      
+      await this.commitTransaction();
+      return { ...secret, value: valueResult.rows[0].value };
+    } catch (e) {
+      await this.rollbackTransaction();
+      throw e;
+    }
+  }
+
+  // Atomic Secret Update
+  async updateSecretAtomic(secret_id, name, value) {
+    try {
+      await this.beginTransaction();
+
+      const secretQuery = {
+        text: "UPDATE secrets SET name = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
+        values: [name, secret_id]
+      };
+      const secretResult = await db.dbQuery(secretQuery.text, secretQuery.values);
+
+      const valueQuery = {
+        text: "UPDATE secret_values SET value = $1, updated_at = NOW() WHERE secret_id = $2 RETURNING *",
+        values: [value, secret_id]
+      };
+      await db.dbQuery(valueQuery.text, valueQuery.values);
+
+      await this.commitTransaction();
+      return secretResult.rows[0];
+    } catch (e) {
+      await this.rollbackTransaction();
+      throw e;
+    }
+  }
+
+  // Atomic Secret Deletion
+  async deleteSecretAtomic(secret_id) {
+    try {
+      await this.beginTransaction();
+      
+      // environment_secrets and secret_values have ON DELETE CASCADE, 
+      // but we do it explicitly or just rely on it. Let's rely on it but ensure the order is right if needed.
+      // Actually, DELETE on secrets will trigger cascade.
+      
+      const query = {
+        text: "DELETE FROM secrets WHERE id = $1 RETURNING *",
+        values: [secret_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      
+      await this.commitTransaction();
+      return result.rows[0];
+    } catch (e) {
+      await this.rollbackTransaction();
       throw e;
     }
   }
@@ -218,12 +306,12 @@ class EnvSyncRepo {
     }
   }
 
-  // get Secrect_Value by secrect_id
-  async getSecrectValueBySecrectId(secrect_id) {
+  // get Secret_Value by secret_id
+  async getSecretValueBySecretId(secret_id) {
     try {
       const query = {
         text: "SELECT * FROM secret_values WHERE secret_id = $1",
-        values: [secrect_id],
+        values: [secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -232,12 +320,12 @@ class EnvSyncRepo {
     }
   }
 
-  // update Secrect_Value by secrect_id
-  async updateSecrectValueBySecrectId(secrect_id, value) {
+  // update Secret_Value by secret_id
+  async updateSecretValueBySecretId(secret_id, value) {
     try {
       const query = {
         text: "UPDATE secret_values SET value = $1,updated_at = NOW() WHERE secret_id = $2 RETURNING *",
-        values: [value, secrect_id],
+        values: [value, secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -245,12 +333,12 @@ class EnvSyncRepo {
       throw e;
     }
   }
-  // Delete Secrect Value by Secrect Id
-  async deleteSecrectValueBySecrectId(secrect_id) {
+  // Delete Secret Value by Secret Id
+  async deleteSecretValueBySecretId(secret_id) {
     try {
       const query = {
         text: "DELETE FROM secret_values WHERE secret_id = $1",
-        values: [secrect_id],
+        values: [secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -259,7 +347,7 @@ class EnvSyncRepo {
     }
   }
 
-  // Get Environment Secrect by environmentSecret_id
+  // Get Environment Secret by environmentSecret_id
 
   async getEnvironmentSecretsById(environment_id) {
     try {
@@ -274,7 +362,7 @@ class EnvSyncRepo {
     }
   }
 
-  // Creating new Environment based on the given environment_id and secrect_id
+  // Creating new Environment based on the given environment_id and secret_id
   async createEnvironmentSecrets(environment_id, secret_id) {
     try {
       const query = {
@@ -288,17 +376,17 @@ class EnvSyncRepo {
     }
   }
 
-  // Updating Environment Secrects based on the Environment Secret ID
+  // Updating Environment Secrets based on the Environment Secret ID
 
   async updateEnvironmentSecretById(
-    environmentSecrect_id,
+    environmentSecret_id,
     environment_id,
-    secrect_id,
+    secret_id,
   ) {
     try {
       const query = {
         text: "UPDATE environment_secrets SET environment_id = $1, secret_id = $2 WHERE id = $3 RETURNING *",
-        values: [environment_id, secrect_id, environmentSecrect_id],
+        values: [environment_id, secret_id, environmentSecret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
@@ -307,13 +395,13 @@ class EnvSyncRepo {
     }
   }
 
-  // Deleting the Environment Secrects Based on the Environment Secret ID
+  // Deleting the Environment Secrets Based on the Environment Secret ID
 
-  async deleteEnvironmentSecretById(environmentSecrect_id) {
+  async deleteEnvironmentSecretById(environmentSecret_id) {
     try {
       const query = {
         text: "DELETE FROM environment_secrets WHERE id = $1",
-        values: [environmentSecrect_id],
+        values: [environmentSecret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];

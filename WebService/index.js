@@ -15,7 +15,7 @@ import { homeRouter } from "./routes/HomeRoute.js";
 import { projectRouter } from "./routes/ProjectRoute.js";
 import { environmentRouter } from "./routes/EnvironmentRoute.js";
 import { secretRouter } from "./routes/SecretRoute.js";
-import { environmentSecretoute } from "./routes/EnvironmentSecretRoute.js";
+import { environmentSecretRoute } from "./routes/EnvironmentSecretRoute.js";
 
 // Dotenv Config
 configDotenv();
@@ -28,7 +28,7 @@ webService.use(cors());
 webService.use(clerkMiddleware());
 
 // Routes/controllers first
-webService.use("/api/v1/environment_secret", environmentSecretoute);
+webService.use("/api/v1/environment_secret", environmentSecretRoute);
 webService.use("/api/v1/secret", secretRouter);
 webService.use("/api/v1/environment", environmentRouter);
 webService.use("/api/v1", homeRouter);

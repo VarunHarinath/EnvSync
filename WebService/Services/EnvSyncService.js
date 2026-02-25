@@ -103,25 +103,14 @@ class EnvSyncService {
   }
 
   // Creating secret variable based on Project_id and the name of the variable
-  async newSecret(project_id, secretName) {
+  async newSecret(project_id, name, value) {
     try {
-      const createSecret = await this.envSyncRepo.createSecrets(
+      const createSecret = await this.envSyncRepo.createSecretAtomic(
         project_id,
-        secretName,
+        name,
+        value
       );
       return createSecret;
-    } catch (e) {
-      throw e;
-    }
-  }
-  //   Creating the secrect value using the secret_id and value given
-  async newSecretValue(secrect_id, secrectValue) {
-    try {
-      const createSecretValue = await this.envSyncRepo.createSecretsValue(
-        secrect_id,
-        secrectValue,
-      );
-      return createSecretValue;
     } catch (e) {
       throw e;
     }
@@ -138,55 +127,51 @@ class EnvSyncService {
     }
   }
 
-  // Get Secrect & secrect Value by secrect_id
-  async getSecretsById(secrect_id) {
+  // Get Secret & Secret Value by secret_id
+  async getSecretsById(secret_id) {
     try {
-      const getSecretsById = await this.envSyncRepo.getSecretsById(secrect_id);
-      const getSecrectValueBySecrectId =
-        await this.envSyncRepo.getSecrectValueBySecrectId(secrect_id);
+      const getSecretsById = await this.envSyncRepo.getSecretsById(secret_id);
+      const getSecretValueBySecretId =
+        await this.envSyncRepo.getSecretValueBySecretId(secret_id);
 
-      return { getSecretsById, getSecrectValueBySecrectId };
+      return { getSecretsById, getSecretValueBySecretId };
     } catch (e) {
       throw e;
     }
   }
 
-  // Update secrect & secrect Value by secret_id
-  async updateSecrectById(secrect_id, name, value) {
+  // Update secret & secret Value by secret_id
+  async updateSecretById(secret_id, name, value) {
     try {
-      const updateSecrectById = await this.envSyncRepo.updateSecretsById(
-        secrect_id,
+      const updateSecret = await this.envSyncRepo.updateSecretAtomic(
+        secret_id,
         name,
+        value
       );
-      const updateSecrectValueBySecrectId =
-        await this.envSyncRepo.updateSecrectValueBySecrectId(secrect_id, value);
-      return { updateSecrectById, updateSecrectValueBySecrectId };
+      return updateSecret;
     } catch (e) {
       throw e;
     }
   }
 
-  // Delete secrect & secrect Value by Secret_id
-  async deleteSecrectById(secrect_id) {
+  // Delete secret & secret Value by secret_id
+  async deleteSecretById(secret_id) {
     try {
-      const deleteSecrectById =
-        await this.envSyncRepo.deleteSecrectById(secrect_id);
-      const deleteSecrectValueBySecrectId =
-        await this.envSyncRepo.deleteSecrectValueBySecrectId(secrect_id);
-
-      return { deleteSecrectById, deleteSecrectValueBySecrectId };
+      const deleteSecret =
+        await this.envSyncRepo.deleteSecretAtomic(secret_id);
+      return deleteSecret;
     } catch (e) {
       throw e;
     }
   }
 
   //   Creating the Environment_Secrets using the environment_id and secret_id for Join Lookup
-  async newEnvironmentSecret(environment_id, secrect_id) {
+  async newEnvironmentSecret(environment_id, secret_id) {
     try {
       const createEnvironmentSecret =
         await this.envSyncRepo.createEnvironmentSecrets(
           environment_id,
-          secrect_id,
+          secret_id,
         );
       return createEnvironmentSecret;
     } catch (e) {
@@ -211,14 +196,14 @@ class EnvSyncService {
   async updateEnvironmentSecretById(
     environment_secret_id,
     environment_id,
-    secrect_id,
+    secret_id,
   ) {
     try {
       const updateEnvironmentSecretById =
         await this.envSyncRepo.updateEnvironmentSecretById(
           environment_secret_id,
           environment_id,
-          secrect_id,
+          secret_id,
         );
       return updateEnvironmentSecretById;
     } catch (e) {
@@ -226,7 +211,7 @@ class EnvSyncService {
     }
   }
 
-  // Deleting the data from the Environment Secrect Table using it's ID
+  // Deleting the data from the Environment Secret Table using it's ID
 
   async deleteEnvironmentSecretById(environment_secret_id) {
     try {

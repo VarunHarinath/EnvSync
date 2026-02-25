@@ -5,17 +5,17 @@ const createSecret = async (req, res, next) => {
   try {
     const { project_id, secretName, secretValue } = req.body;
 
-    const createSecret = await envSyncService.newSecret(project_id, secretName);
-    const createSecretValue = await envSyncService.newSecretValue(
-      createSecret.id,
-      secretValue,
+    const result = await envSyncService.newSecret(
+      project_id, 
+      secretName, 
+      secretValue
     );
-    successResponse(res, createSecretValue, 201);
+    successResponse(res, result, 201);
   } catch (e) {
     next(e);
   }
 };
-// get secrects based on project Id
+// get secrets based on project Id
 const getSecretsByProjectId = async (req, res, next) => {
   try {
     const { project_id } = req.params;
@@ -27,41 +27,41 @@ const getSecretsByProjectId = async (req, res, next) => {
   }
 };
 
-// Get secrect & Secrect Values based on the secrect_id
+// Get secret & Secret Values based on the secret_id
 
-const getSecretsBySecrectId = async (req, res, next) => {
+const getSecretsBySecretId = async (req, res, next) => {
   try {
     const { secret_id } = req.params;
-    const getSecretsBySecrectId =
+    const result =
       await envSyncService.getSecretsById(secret_id);
-    successResponse(res, getSecretsBySecrectId, 200);
+    successResponse(res, result, 200);
   } catch (e) {
     next(e);
   }
 };
 
-// Update Secrect's by secret_id
+// Update Secret's by secret_id
 
-const updateSecrectById = async (req, res, next) => {
+const updateSecretById = async (req, res, next) => {
   try {
     const { secret_id } = req.params;
     const { name, value } = req.body;
-    const updateSecrectById = await envSyncService.updateSecrectById(
+    const result = await envSyncService.updateSecretById(
       secret_id,
       name,
       value,
     );
-    successResponse(res, updateSecrectById, 201);
+    successResponse(res, result, 201);
   } catch (e) {
     next(e);
   }
 };
 
-const deleteSecrectById = async (req, res, next) => {
+const deleteSecretById = async (req, res, next) => {
   try {
     const { secret_id } = req.params;
-    const deleteSecrectById = await envSyncService.deleteSecrectById(secret_id);
-    successResponse(res, deleteSecrectById, 201);
+    const result = await envSyncService.deleteSecretById(secret_id);
+    successResponse(res, result, 201);
   } catch (e) {
     next(e);
   }
@@ -70,7 +70,7 @@ const deleteSecrectById = async (req, res, next) => {
 export {
   createSecret,
   getSecretsByProjectId,
-  getSecretsBySecrectId,
-  updateSecrectById,
-  deleteSecrectById,
+  getSecretsBySecretId,
+  updateSecretById,
+  deleteSecretById,
 };
