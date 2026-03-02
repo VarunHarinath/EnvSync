@@ -16,6 +16,7 @@ import { projectRouter } from "./routes/ProjectRoute.js";
 import { environmentRouter } from "./routes/EnvironmentRoute.js";
 import { secretRouter } from "./routes/SecretRoute.js";
 import { environmentSecretRoute } from "./routes/EnvironmentSecretRoute.js";
+import { apiRouter } from "./routes/ApiRoute.js";
 
 // Dotenv Config
 configDotenv();
@@ -33,6 +34,7 @@ webService.use("/api/v1/secret", secretRouter);
 webService.use("/api/v1/environment", environmentRouter);
 webService.use("/api/v1", homeRouter);
 webService.use("/api/v1/project", projectRouter);
+webService.use("/api/v1/api", apiRouter);
 
 // Test Route For Clerk
 webService.get("/user", requireAuth(), async (req, res) => {

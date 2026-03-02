@@ -225,7 +225,6 @@ class EnvSyncService {
     }
   }
 
-  //   Creating API Table for Environment_ID & hash_key storage
   async newApi(project_id, environment_id, key_hash, key_prefix) {
     try {
       const createApi = await this.envSyncRepo.createApi(
@@ -235,6 +234,26 @@ class EnvSyncService {
         key_prefix,
       );
       return createApi;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Get API Keys by Project Id
+  async getApiKeysByProjectId(project_id) {
+    try {
+      const getApiKeys = await this.envSyncRepo.getApiKeysByProjectId(project_id);
+      return getApiKeys;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Delete API Key
+  async deleteApiKeyById(api_key_id) {
+    try {
+      const deleteApi = await this.envSyncRepo.deleteApiKeyById(api_key_id);
+      return deleteApi;
     } catch (e) {
       throw e;
     }

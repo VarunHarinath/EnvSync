@@ -221,20 +221,23 @@ class EnvSyncRepo {
   async createSecretAtomic(project_id, name, value) {
     try {
       await this.beginTransaction();
-      
+
       const secretQuery = {
         text: "INSERT INTO secrets(project_id, name) VALUES($1, $2) RETURNING *",
-        values: [project_id, name]
+        values: [project_id, name],
       };
-      const secretResult = await db.dbQuery(secretQuery.text, secretQuery.values);
+      const secretResult = await db.dbQuery(
+        secretQuery.text,
+        secretQuery.values,
+      );
       const secret = secretResult.rows[0];
 
       const valueQuery = {
         text: "INSERT INTO secret_values(secret_id, value) VALUES($1, $2) RETURNING *",
-        values: [secret.id, value]
+        values: [secret.id, value],
       };
       const valueResult = await db.dbQuery(valueQuery.text, valueQuery.values);
-      
+
       await this.commitTransaction();
       return { ...secret, value: valueResult.rows[0].value };
     } catch (e) {
@@ -250,13 +253,16 @@ class EnvSyncRepo {
 
       const secretQuery = {
         text: "UPDATE secrets SET name = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
-        values: [name, secret_id]
+        values: [name, secret_id],
       };
-      const secretResult = await db.dbQuery(secretQuery.text, secretQuery.values);
+      const secretResult = await db.dbQuery(
+        secretQuery.text,
+        secretQuery.values,
+      );
 
       const valueQuery = {
         text: "UPDATE secret_values SET value = $1, updated_at = NOW() WHERE secret_id = $2 RETURNING *",
-        values: [value, secret_id]
+        values: [value, secret_id],
       };
       await db.dbQuery(valueQuery.text, valueQuery.values);
 
@@ -272,17 +278,17 @@ class EnvSyncRepo {
   async deleteSecretAtomic(secret_id) {
     try {
       await this.beginTransaction();
-      
-      // environment_secrets and secret_values have ON DELETE CASCADE, 
+
+      // environment_secrets and secret_values have ON DELETE CASCADE,
       // but we do it explicitly or just rely on it. Let's rely on it but ensure the order is right if needed.
       // Actually, DELETE on secrets will trigger cascade.
-      
+
       const query = {
         text: "DELETE FROM secrets WHERE id = $1 RETURNING *",
         values: [secret_id],
       };
       const result = await db.dbQuery(query.text, query.values);
-      
+
       await this.commitTransaction();
       return result.rows[0];
     } catch (e) {
@@ -409,11 +415,40 @@ class EnvSyncRepo {
       throw e;
     }
   }
+
   async createApi(project_id, environment_id, key_hash, key_prefix) {
     try {
       const query = {
         text: "INSERT INTO api_keys(project_id,environment_id,key_hash,key_prefix) values($1,$2,$3,$4) RETURNING *",
         values: [project_id, environment_id, key_hash, key_prefix],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows[0];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Get API Keys by Project Id
+  async getApiKeysByProjectId(project_id) {
+    try {
+      const query = {
+        text: "SELECT ak.*, e.name as environment_name FROM api_keys ak JOIN environments e ON ak.environment_id = e.id WHERE ak.project_id = $1 ORDER BY ak.created_at DESC",
+        values: [project_id],
+      };
+      const result = await db.dbQuery(query.text, query.values);
+      return result.rows;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // Delete API Key (Revocation)
+  async deleteApiKeyById(api_key_id) {
+    try {
+      const query = {
+        text: "DELETE FROM api_keys WHERE id = $1 RETURNING *",
+        values: [api_key_id],
       };
       const result = await db.dbQuery(query.text, query.values);
       return result.rows[0];
