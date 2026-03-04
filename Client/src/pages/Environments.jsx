@@ -13,6 +13,7 @@ import Input from '../components/common/Input';
 import { Plus, Trash2, Lock, Edit2 } from 'lucide-react';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
 import { cn } from '../utils';
 
 export default function Environments() {
@@ -24,6 +25,8 @@ export default function Environments() {
   const [newEnvName, setNewEnvName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Fetch Envs
   const fetchEnvs = () => environmentsApi.getByProject(projectId);
@@ -93,15 +96,19 @@ export default function Environments() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteEnv = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this environment?')) return;
+  const handleDeleteEnv = async () => {
+    if (!selectedEnv) return;
+    setIsDeleting(true);
     try {
-        await environmentsApi.delete(id);
+        await environmentsApi.delete(selectedEnv.id);
         toast({ title: 'Deleted', description: 'Environment deleted.' });
         setSelectedEnv(null);
+        setShowDeleteConfirm(false);
         refetch();
     } catch (e) {
         toast({ title: 'Error', variant: 'destructive' });
+    } finally {
+        setIsDeleting(false);
     }
   };
 
@@ -122,6 +129,7 @@ export default function Environments() {
   const [isManageSecretsOpen, setIsManageSecretsOpen] = useState(false);
   const [projectSecrets, setProjectSecrets] = useState([]);
   const [attachedSecrets, setAttachedSecrets] = useState([]); 
+  const [activeTab, setActiveTab] = useState('attach'); // 'attach' | 'attached'
   const [isSyncingSecrets, setIsSyncingSecrets] = useState(false);
 
   // Fetch secrets for the drawer/modal
@@ -380,7 +388,7 @@ export default function Environments() {
                     <Button 
                       variant="ghost" 
                       className="w-full text-destructive hover:bg-destructive/10"
-                      onClick={() => handleDeleteEnv(selectedEnv.id)}
+                      onClick={() => setShowDeleteConfirm(true)}
                     >
                         <Trash2 className="mr-2 h-4 w-4" /> Delete Environment
                     </Button>
@@ -397,48 +405,44 @@ export default function Environments() {
         footer={<Button variant="ghost" onClick={() => setIsManageSecretsOpen(false)}>Done</Button>}
       >
           <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">Attach project secrets to <strong>{selectedEnv?.name}</strong> to make them available in the environment.</p>
-              
-              {projectSecrets.length === 0 ? (
-                  <div className="text-center py-8 border rounded-md border-dashed">
-                      <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
-                      <p className="text-sm text-muted-foreground">No secrets in this project.</p>
-                      <Button variant="link" size="sm" onClick={() => window.location.href=`/project/${projectId}/secrets`}>Go to Secrets</Button>
-                  </div>
-              ) : (
-                  <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-                    {projectSecrets.map(secret => {
-                        // Check if secret is already attached
-                        const attachment = attachedSecrets.find(as => as.secret_id === secret.id);
-                        const isAttached = !!attachment;
-                        const isTemp = isAttached && String(attachment.environment_secret_id).startsWith('temp-');
-                        
-                        return (
-                        <div key={secret.id} className="flex items-center justify-between p-3 border rounded-md bg-card hover:bg-muted/50 transition-colors">
-                            <div className="flex flex-col">
-                                <span className="font-mono text-sm font-medium">{secret.name}</span>
-                                <span className="text-[10px] text-muted-foreground">Global Project Secret</span>
-                            </div>
-                            {isAttached ? (
-                                <div className="flex items-center gap-2">
-                                    <div className={cn(
-                                        "flex items-center gap-1.5 px-2 py-1 rounded-full border shadow-sm",
-                                        isTemp ? "bg-yellow-50 text-yellow-700 border-yellow-100" : "bg-green-50 text-green-700 border-green-100"
-                                    )}>
-                                        <div className={cn("h-1.5 w-1.5 rounded-full", isTemp ? "bg-yellow-500 animate-pulse" : "bg-green-500")} />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">{isTemp ? "Syncing..." : "Attached"}</span>
-                                    </div>
-                                    <Button 
-                                        size="sm" 
-                                        variant="ghost" 
-                                        className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
-                                        onClick={() => handleRemoveSecret(attachment.environment_secret_id)}
-                                        disabled={isTemp || isSyncingSecrets}
-                                    >
-                                        Detach
-                                    </Button>
+              <div className="flex border-b">
+                  <button 
+                    className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === 'attach' ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                    )}
+                    onClick={() => setActiveTab('attach')}
+                  >
+                      Attach Secrets
+                  </button>
+                  <button 
+                    className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === 'attached' ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                    )}
+                    onClick={() => setActiveTab('attached')}
+                  >
+                      Attached ({attachedSecrets.length})
+                  </button>
+              </div>
+
+              {activeTab === 'attach' ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">Available secrets to attach to <strong>{selectedEnv?.name}</strong>.</p>
+                  
+                  {projectSecrets.filter(s => !attachedSecrets.some(as => as.secret_id === s.id)).length === 0 ? (
+                      <div className="text-center py-8 border rounded-md border-dashed">
+                          <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
+                          <p className="text-sm text-muted-foreground">All secrets are already attached or none available.</p>
+                      </div>
+                  ) : (
+                      <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                        {projectSecrets.filter(s => !attachedSecrets.some(as => as.secret_id === s.id)).map(secret => (
+                            <div key={secret.id} className="flex items-center justify-between p-3 border rounded-md bg-card hover:bg-muted/50 transition-colors">
+                                <div className="flex flex-col">
+                                    <span className="font-mono text-sm font-medium">{secret.name}</span>
+                                    <span className="text-[10px] text-muted-foreground">Global Project Secret</span>
                                 </div>
-                            ) : (
                                 <Button 
                                     size="sm" 
                                     variant="secondary" 
@@ -448,11 +452,40 @@ export default function Environments() {
                                 >
                                     Attach
                                 </Button>
-                            )}
-                        </div>
-                        );
-                    })}
-                  </div>
+                            </div>
+                        ))}
+                      </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                   <p className="text-sm text-muted-foreground">Secrets currently attached to <strong>{selectedEnv?.name}</strong>.</p>
+                   {attachedSecrets.length === 0 ? (
+                       <div className="text-center py-8 border rounded-md border-dashed">
+                           <p className="text-sm text-muted-foreground">No secrets attached yet.</p>
+                       </div>
+                   ) : (
+                       <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                           {attachedSecrets.map(attachment => (
+                               <div key={attachment.environment_secret_id} className="flex items-center justify-between p-3 border rounded-md bg-card hover:bg-muted/50 transition-colors">
+                                   <div className="flex flex-col">
+                                       <span className="font-mono text-sm font-medium">{attachment.secret_name}</span>
+                                       <span className="text-[10px] text-muted-foreground">Attached Secret</span>
+                                   </div>
+                                   <Button 
+                                       size="sm" 
+                                       variant="ghost" 
+                                       className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                                       onClick={() => handleRemoveSecret(attachment.environment_secret_id)}
+                                       disabled={isSyncingSecrets}
+                                   >
+                                       Detach
+                                   </Button>
+                               </div>
+                           ))}
+                       </div>
+                   )}
+                </div>
               )}
           </div>
       </Modal>
@@ -479,6 +512,16 @@ export default function Environments() {
             />
         </div>
       </Modal>
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteEnv}
+        title="Delete Environment"
+        description={`This will permanently delete the environment "${selectedEnv?.name}" and detach all its secrets.`}
+        requiredText={selectedEnv?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

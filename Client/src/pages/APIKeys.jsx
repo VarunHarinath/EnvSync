@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { environmentsApi } from '../api/environments';
 import { apiKeysApi } from '../api/apiKeys';
 import { useFetch } from '../hooks/useFetch';
 import { useToast } from '../hooks/useToast';
@@ -9,56 +10,132 @@ import Modal from '../components/common/Modal';
 import Badge from '../components/common/Badge';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
 import { Plus, Trash2, Key, Copy, AlertTriangle } from 'lucide-react';
+import { cn } from '../utils';
+
+// Helper to generate a random key
+const generateKey = () => {
+  const bytes = new Uint8Array(24);
+  window.crypto.getRandomValues(bytes);
+  const raw = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `sk_live_${raw}`;
+};
+
+// Helper to hash a key
+const hashKey = async (key) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(key);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
+const PillSelector = ({ options, selectedId, onChange }) => {
+  if (!options || options.length === 0) return null;
+  
+  return (
+    <div className="relative w-full max-h-[220px] overflow-y-auto pr-2 custom-scrollbar bg-muted/30 rounded-2xl p-1.5 border border-muted-foreground/5 space-y-1">
+      {options.map((option) => {
+        const isActive = selectedId === option.id;
+        return (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => onChange(option.id)}
+            className={cn(
+              "relative w-full py-2.5 px-4 text-sm font-semibold transition-all duration-300 rounded-xl text-left flex items-center justify-between group",
+              isActive 
+                ? "bg-background text-primary shadow-md shadow-primary/5 ring-1 ring-primary/10" 
+                : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+            )}
+          >
+            <div className="flex items-center gap-3">
+               <div className={cn(
+                  "h-1.5 w-1.5 rounded-full transition-all duration-300",
+                  isActive ? "bg-primary scale-110" : "bg-muted-foreground/30 group-hover:bg-muted-foreground/60"
+               )} />
+               <span className="truncate">{option.name}</span>
+            </div>
+            {isActive && (
+              <div className="h-4 w-1 bg-primary rounded-full animate-in slide-in-from-right-1 duration-300" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 export default function ApiKeys() {
   const { projectId } = useParams();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [createdKey, setCreatedKey] = useState(null); // If set, show success modal
+  const [createdKey, setCreatedKey] = useState(null); 
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedEnvId, setSelectedEnvId] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [keyToRevoke, setKeyToRevoke] = useState(null);
 
   const fetchKeys = () => apiKeysApi.getByProject(projectId);
   const { data: apiKeys, isLoading, refetch } = useFetch(fetchKeys, [projectId]);
 
+  const fetchEnvs = () => environmentsApi.getByProject(projectId);
+  const { data: environments } = useFetch(fetchEnvs, [projectId]);
+
+  React.useEffect(() => {
+    if (environments && environments.length > 0 && !selectedEnvId) {
+      setSelectedEnvId(environments[0].id);
+    }
+  }, [environments, selectedEnvId]);
+
   const handleCreate = async () => {
-    // For mock, just pass mock env ID
+    if (!selectedEnvId) {
+      toast({ title: 'Error', description: 'Please select an environment.', variant: 'destructive' });
+      return;
+    }
     setIsCreating(true);
     try {
-      // In real app, we select environment. Here we just mock it.
-        const res = await apiKeysApi.create(projectId, 'env_1'); 
-        // Mock response should contain the full key ONCE
-        const fullKey = `sk_live_${Math.random().toString(36).substr(2)}`; 
+        const fullKey = generateKey();
+        const prefix = fullKey.substring(0, 7); // sk_live
+        const hash = await hashKey(fullKey);
+
+        await apiKeysApi.create(projectId, selectedEnvId, hash, prefix); 
+        
         setCreatedKey(fullKey);
         setIsModalOpen(false);
         refetch();
     } catch (e) {
-        toast({ title: 'Error', variant: 'destructive' });
+        toast({ title: 'Error', description: e.message || 'Failed to create key.', variant: 'destructive' });
     } finally {
         setIsCreating(false);
     }
   };
 
-  const handleRevoke = async (id) => {
-      if (!window.confirm('Revoke this API Key? It will stop working immediately.')) return;
+  const handleRevoke = async () => {
+      if (!keyToRevoke) return;
+      setIsDeleting(true);
       try {
-          await apiKeysApi.revoke(id);
+          await apiKeysApi.revoke(keyToRevoke.id);
           toast({ title: 'Revoked', description: 'API Key revoked.' });
+          setKeyToRevoke(null);
           refetch();
       } catch (e) {
           toast({ title: 'Error', variant: 'destructive' });
+      } finally {
+          setIsDeleting(false);
       }
   };
 
   const columns = [
       { header: 'Key Prefix', accessorKey: 'key_prefix', className: 'font-mono' },
-      { header: 'Environment', accessorKey: 'environment_id', render: () => 'Production' }, // Mock
+      { header: 'Environment', accessorKey: 'environment_name' }, 
       { header: 'Created', accessorKey: 'created_at', render: (row) => new Date(row.created_at).toLocaleDateString() },
       { header: 'Status', accessorKey: 'status', render: (row) => (
           <Badge variant={row.status === 'active' ? 'success' : 'destructive'}>{row.status}</Badge>
       )},
       { header: '', render: (row) => row.status === 'active' && (
-          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleRevoke(row.id)}>Revoke</Button>
+          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setKeyToRevoke(row)}>Revoke</Button>
       )}
   ];
 
@@ -87,7 +164,6 @@ export default function ApiKeys() {
          )}
       </div>
 
-      {/* Creation Modal */}
       <Modal
          isOpen={isModalOpen}
          onClose={() => setIsModalOpen(false)}
@@ -99,9 +175,19 @@ export default function ApiKeys() {
              </>
          }
       >
-          <p className="text-sm text-muted-foreground">
-              This will create a new API key for the <strong>Production</strong> environment.
-          </p>
+          <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                  Create a new API key to access environment secrets programmatically.
+              </p>
+              <div className="space-y-3 pt-2">
+                  <label className="text-base font-medium px-1">Choose Environment</label>
+                  <PillSelector 
+                    options={environments || []}
+                    selectedId={selectedEnvId}
+                    onChange={setSelectedEnvId}
+                  />
+              </div>
+          </div>
       </Modal>
 
       {/* Success Modal (Show Key) */}
@@ -136,6 +222,17 @@ export default function ApiKeys() {
               </div>
           </div>
       </Modal>
+
+      <DeleteConfirmationModal
+        isOpen={!!keyToRevoke}
+        onClose={() => setKeyToRevoke(null)}
+        onConfirm={handleRevoke}
+        title="Revoke API Key"
+        description="This key will stop working immediately. This action cannot be undone."
+        requiredText="REVOKE"
+        confirmLabel="Revoke Key"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

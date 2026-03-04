@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import Input from '../components/common/Input';
 import EmptyState from '../components/common/EmptyState';
+import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
 
 
 export default function Projects() {
@@ -20,6 +21,8 @@ export default function Projects() {
   const [newProjectName, setNewProjectName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
 
   // Fetch Projects
   const fetchProjects = useCallback(() => projectsApi.getAll(), []);
@@ -66,15 +69,18 @@ export default function Projects() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteProject = async (e, id) => {
-    e.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this project?')) return;
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+    setIsDeleting(true);
     try {
-        await projectsApi.delete(id);
+        await projectsApi.delete(projectToDelete.id);
         toast({ title: 'Deleted', description: 'Project deleted.' });
+        setProjectToDelete(null);
         refetch();
     } catch (error) {
         toast({ title: 'Error', variant: 'destructive' });
+    } finally {
+        setIsDeleting(false);
     }
   };
 
@@ -97,7 +103,7 @@ export default function Projects() {
                 >
                     <Edit2 className="h-4 w-4" />
                 </Button>
-                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => handleDeleteProject(e, row.id)}>
+                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); setProjectToDelete(row); }}>
                     <Trash2 className="h-4 w-4" />
                 </Button>
             </div>
@@ -172,6 +178,16 @@ export default function Projects() {
             </div>
         </div>
       </Modal>
+
+      <DeleteConfirmationModal
+        isOpen={!!projectToDelete}
+        onClose={() => setProjectToDelete(null)}
+        onConfirm={handleDeleteProject}
+        title="Delete Project"
+        description={`This will permanently delete the project "${projectToDelete?.name}" and all its environments and secrets.`}
+        requiredText={projectToDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

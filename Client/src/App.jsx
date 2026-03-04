@@ -6,8 +6,7 @@ import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import Environments from './pages/Environments';
 import Secrets from './pages/Secrets';
-import APIKeys from './pages/APIKeys';
-import AuditLogs from './pages/AuditLogs';
+import ApiKeys from './pages/ApiKeys';
 import Settings from './pages/Settings';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -26,9 +25,8 @@ export default function App() {
              <Route path="/projects/:projectId" element={<ProjectDetail />} />
              <Route path="/projects/:projectId/environments" element={<Environments />} />
              <Route path="/projects/:projectId/secrets" element={<Secrets />} />
-             <Route path="/projects/:projectId/api-keys" element={<APIKeys />} />
+             <Route path="/projects/:projectId/api-keys" element={<ApiKeys />} />
              
-             <Route path="/audit-logs" element={<AuditLogs />} />
              <Route path="/settings" element={<Settings />} />
           </Route>
           

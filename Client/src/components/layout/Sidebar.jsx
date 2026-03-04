@@ -7,7 +7,6 @@ import {
   Lock, 
   Key, 
   Settings, 
-  FileText, 
   Hexagon 
 } from 'lucide-react';
 
@@ -49,11 +48,6 @@ export default function Sidebar() {
       },
     ] : []),
     // Global
-    { 
-      label: 'Audit Logs', 
-      icon: FileText, 
-      to: '/audit-logs' 
-    },
     { 
       label: 'Settings', 
       icon: Settings, 
