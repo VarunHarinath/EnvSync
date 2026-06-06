@@ -84,3 +84,6 @@ dist-ssr
 
 # Jmeter
 jmeter.log
+
+*.dump
+Database_backups

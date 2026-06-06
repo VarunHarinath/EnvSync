@@ -1,8 +1,8 @@
 // Config
 export const USE_MOCK = false;
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://192.168.1.10:8080/api/v1";
-
+  import.meta.env.VITE_API_BASE_URL ||
+  `${window.location.protocol}//${window.location.hostname}:8080/api/v1`;
 export const MOCK_DB = {
   projects: [
     {
