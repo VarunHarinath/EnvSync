@@ -6,7 +6,7 @@ class ConnectDatabase {
     try {
       this.pool = new Pool({
         user: "varunharinath",
-        password: "",
+        password: "postgres",
         host: "localhost",
         port: 5432,
         database: "envsync",
