@@ -2,12 +2,12 @@
 import express from "express";
 import cors from "cors";
 import * as Sentry from "@sentry/node";
-import {
-  clerkMiddleware,
-  requireAuth,
-  getAuth,
-  clerkClient,
-} from "@clerk/express";
+// import {
+//   clerkMiddleware,
+//   requireAuth,
+//   getAuth,
+//   clerkClient,
+// } from "@clerk/express";
 import { configDotenv } from "dotenv";
 
 // Components imports...
@@ -26,7 +26,7 @@ const webService = express();
 
 webService.use(express.json());
 webService.use(cors());
-webService.use(clerkMiddleware());
+// webService.use(clerkMiddleware());
 
 // Routes/controllers first
 webService.use("/api/v1/environment_secret", environmentSecretRoute);
@@ -36,16 +36,16 @@ webService.use("/api/v1", homeRouter);
 webService.use("/api/v1/project", projectRouter);
 webService.use("/api/v1/api", apiRouter);
 
-// Test Route For Clerk
-webService.get("/user", requireAuth(), async (req, res) => {
-  try {
-    const { userId } = getAuth(req);
-    const user = await clerkClient.users.getUser(userId);
-    res.json(user);
-  } catch (e) {
-    next(e);
-  }
-});
+// Test Route For Clerk -- temporarily puased for homelab integration
+// webService.get("/user", requireAuth(), async (req, res) => {
+//   try {
+//     const { userId } = getAuth(req);
+//     const user = await clerkClient.users.getUser(userId);
+//     res.json(user);
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 // Debug route must be before error handlers
 webService.get("/debug-sentry", (req, res) => {
