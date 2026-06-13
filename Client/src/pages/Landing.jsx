@@ -70,16 +70,16 @@ export default function Landing() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-500"></span>
           </span>
-          NOW IN OPEN BETA
+          100% LOCAL & OFFLINE-FIRST
         </div>
         
         <h1 className="text-5xl md:text-8xl font-extrabold tracking-tighter mb-8 leading-[0.95] text-white">
-          Ship faster.<br />
-          <span className="text-[#888]">Without leaking secrets.</span>
+          Secrets, localized.<br />
+          <span className="text-[#888]">Zero cloud. Zero leak.</span>
         </h1>
         
         <p className="text-lg md:text-xl text-[#888] max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-          EnvSync centralizes and encrypts environment variables across development, staging, and production — with millisecond sync and zero plaintext exposure.
+          EnvSync is a 100% local, offline-first environment manager. Spin up a secure config vault on your machine with one CLI command, or sync across teams via a local server.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -106,7 +106,7 @@ export default function Landing() {
               </div>
               <div className="mx-auto flex items-center gap-2 text-[10px] text-[#444] font-mono">
                 <Globe className="w-3 h-3" />
-                console.envsync.com/projects/payment-gateway/secrets
+                localhost:8080/projects/payment-gateway/secrets
               </div>
             </div>
             
@@ -126,7 +126,7 @@ export default function Landing() {
                 <div className="flex items-center justify-between mb-8">
                   <div className="space-y-1">
                     <h4 className="text-sm font-bold text-white">Production Secrets</h4>
-                    <p className="text-[11px] text-[#444]">manage keys for your staging environment</p>
+                    <p className="text-[11px] text-[#444]">manage keys for your local development</p>
                   </div>
                   <div className="flex gap-2">
                     <div className="w-7 h-7 bg-white/5 rounded border border-white/[0.05] flex items-center justify-center">
@@ -165,26 +165,26 @@ export default function Landing() {
       {/* Features Section */}
       <section className="py-40 px-8 max-w-7xl mx-auto border-t border-white/[0.05]">
         <div className="text-center mb-24">
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">Everything you need to manage secrets.</h2>
-          <p className="text-[#888] text-xl font-medium tracking-tight">Simple. Secure. Scalable.</p>
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">All your secrets. Safely localized.</h2>
+          <p className="text-[#888] text-xl font-medium tracking-tight">100% Local. No Cloud Dependencies. Safe & Offline-First.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
             { 
               icon: Zap, 
-              title: 'Instant Sync', 
-              desc: 'Synchronize environment variables across your stack in milliseconds.' 
+              title: 'CLI-First Onboarding', 
+              desc: 'Run a single command to spin up your local database, daemon, and interactive dashboard in seconds.' 
             },
             { 
               icon: Shield, 
-              title: 'End-to-End Encryption', 
-              desc: 'Secrets encrypted at rest and in transit. No plaintext exposure.' 
+              title: '100% Local & Private', 
+              desc: 'Secrets are stored on your machine or local server using AES-256. Perfect for air-gapped development.' 
             },
             { 
               icon: Code, 
-              title: 'SDK-Based Integration', 
-              desc: 'Integrate via Node.js and Python SDKs with minimal configuration.' 
+              title: 'Zero-Overhead SDKs', 
+              desc: 'Import our Node.js and Python SDKs to query secrets on-the-fly with automatic production fallbacks.' 
             }
           ].map((card, i) => (
             <div key={i} className="group p-10 rounded-3xl border border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.02] transition-all duration-300">
@@ -213,24 +213,24 @@ export default function Landing() {
             
             {[
               { 
-                icon: Shield, 
-                title: 'Store Secrets Securely', 
-                desc: 'Secrets encrypted using AES-256-GCM and never stored in plaintext.' 
+                icon: Terminal, 
+                title: 'Init with CLI', 
+                desc: 'Initialize the local server and SQLite database on your machine using our lightweight CLI tool.' 
               },
               { 
                 icon: Layers, 
-                title: 'Attach to Environments', 
-                desc: 'Assign secrets to development, staging, or production environments.' 
+                title: 'Configure via Web UI', 
+                desc: 'Access your local dashboard to manage projects, create environments, and add configuration secrets.' 
               },
               { 
-                icon: Key, 
-                title: 'Generate Scoped API Keys', 
-                desc: 'Create environment-specific API keys with granular access control.' 
+                icon: Code, 
+                title: 'Access directly in Code', 
+                desc: 'Use the Node/Python SDK in your app to fetch secrets without writing static .env files to disk.' 
               },
               { 
-                icon: Terminal, 
-                title: 'Pull via SDK', 
-                desc: 'Applications retrieve only the secrets they are authorized to access.' 
+                icon: Shield, 
+                title: 'Zero-Change Production', 
+                desc: 'In production, the SDK automatically falls back to standard system environment variables.' 
               }
             ].map((step, i) => (
               <div key={i} className="relative z-10 flex flex-col">
@@ -256,17 +256,17 @@ export default function Landing() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-10 leading-[1.1]">
-              Built for Engineers.<br />
-              Designed for Scale.
+              Built for Developers.<br />
+              100% Local-First.
             </h2>
             <div className="grid grid-cols-1 gap-6">
               {[
-                'PostgreSQL-backed architecture',
-                'End-to-end encryption',
-                'Environment-scoped API keys',
-                'RESTful API',
-                'Load tested infrastructure',
-                'Designed for horizontal scaling'
+                'SQLite & PostgreSQL support',
+                'AES-256 local encryption',
+                'Zero-overhead memory caching',
+                'Node.js & Python SDKs',
+                'Single-command local server deployment',
+                'Zero third-party cloud dependency'
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-1 h-1 rounded-full bg-white opacity-40" />
@@ -285,7 +285,7 @@ export default function Landing() {
               <div className="bg-[#111] border-b border-white/[0.05] px-4 py-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                    <Code className="w-3.5 h-3.5 text-blue-400" />
-                   <span className="text-[10px] font-bold text-[#666] tracking-widest uppercase">envsync-node-sdk v4.12.0</span>
+                   <span className="text-[10px] font-bold text-[#666] tracking-widest uppercase">envsync-sdk v1.0.0</span>
                 </div>
                 <div className="flex gap-1">
                    {[1, 2, 3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-[#333]" />)}
@@ -309,16 +309,12 @@ export default function Landing() {
               {/* Code Content */}
               <div className="p-8 font-mono text-[13px] leading-relaxed flex">
                 <div className="hidden sm:flex flex-col text-right pr-6 border-r border-white/[0.03] text-[#333] select-none">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => <span key={n}>{n}</span>)}
+                  {[1, 2, 3].map(n => <span key={n}>{n}</span>)}
                 </div>
                 <div className="pl-6 flex flex-col">
-                  <p className="text-[#a5d6ff]"><span className="text-[#ff7b72]">import</span> client <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">'@envsync/node'</span></p>
-                  <p className="mt-4"><span className="text-[#ff7b72]">await</span> client.<span className="text-[#d2a8ff]">init</span>({'{'}</p>
-                  <p className="pl-6 text-[#c9d1d9]">apiKey: process.env.<span className="text-[#79c0ff]">STORAGE_KEY</span>,</p>
-                  <p className="pl-6 text-[#c9d1d9]">env: <span className="text-[#a5d6ff]">'production'</span></p>
-                  <p className="text-[#c9d1d9]">{'}'})</p>
-                  <p className="mt-4 text-[#8b949e]">// Fetch secret with zero overhead</p>
-                  <p className="text-[#c9d1d9]"><span className="text-[#ff7b72]">const</span> dbPassword = <span className="text-[#ff7b72]">await</span> client.<span className="text-[#d2a8ff]">get</span>(<span className="text-[#a5d6ff]">'DB_PASS'</span>)</p>
+                  <p className="text-[#a5d6ff]"><span className="text-[#ff7b72]">import</span> es <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">'envsync-sdk'</span></p>
+                  <p className="mt-4 text-[#8b949e]">// Fetches from local daemon in dev, system env in prod</p>
+                  <p className="text-[#c9d1d9]"><span className="text-[#ff7b72]">const</span> dbPassword = <span className="text-[#ff7b72]">await</span> es.<span className="text-[#d2a8ff]">getSecret</span>(<span className="text-[#a5d6ff]">'DATABASE_URL'</span>)</p>
                 </div>
               </div>
             </div>
@@ -332,7 +328,7 @@ export default function Landing() {
           <div className="absolute inset-0 bg-white/[0.01] opacity-0 group-hover:opacity-100 transition-opacity" />
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Developer Documentation</h2>
           <p className="text-[#888] mb-12 max-w-xl mx-auto font-medium text-lg leading-relaxed">
-            Clear API references. SDK guides. Security model. Architecture overview. Everything you need to get started in minutes.
+            Local setup guides. SDK references. Team hosting instructions. Learn how to configure EnvSync on localhost or deploy it across your internal server.
           </p>
           <Button className="h-12 px-12 bg-white text-black hover:bg-[#e1e1e1] border-none font-bold rounded-full">
             View Docs
@@ -350,7 +346,7 @@ export default function Landing() {
               </div>
               <span className="text-lg font-bold text-white">EnvSync</span>
             </div>
-            <p className="text-sm text-[#444] font-medium tracking-tight">Built for engineers by engineers.</p>
+            <p className="text-sm text-[#444] font-medium tracking-tight">Built for developers by developers. 100% offline-first.</p>
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-[11px] font-bold tracking-[0.2em] uppercase text-[#444]">
