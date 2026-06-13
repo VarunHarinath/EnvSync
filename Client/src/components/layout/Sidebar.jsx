@@ -9,6 +9,7 @@ import {
   Settings, 
   Hexagon 
 } from 'lucide-react';
+import Logo from '../common/Logo';
 
 export default function Sidebar() {
   const { projectId } = useParams();
@@ -59,9 +60,7 @@ export default function Sidebar() {
     <aside className="w-64 border-r bg-card flex flex-col hidden md:flex h-screen sticky top-0 transition-colors">
       <div className="h-14 flex items-center px-6 border-b">
         <NavLink to="/" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 bg-gradient-to-tr from-purple-600 to-blue-500 rounded flex items-center justify-center shadow-lg shadow-purple-500/10 group-hover:scale-110 transition-transform">
-            <Lock className="h-3.5 w-3.5 text-white" />
-          </div>
+          <Logo className="w-7 h-7 group-hover:scale-110 transition-transform" />
           <span className="text-lg font-bold tracking-tight text-foreground">EnvSync</span>
         </NavLink>
       </div>

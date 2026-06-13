@@ -19,6 +19,7 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 import Button from '../components/common/Button';
+import Logo from '../components/common/Logo';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -34,9 +35,7 @@ export default function Landing() {
       {/* Navigation */}
       <nav className="relative z-50 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto border-b border-white/[0.05] bg-black/50 backdrop-blur-md sticky top-0">
         <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-8 h-8 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-300">
-            <Lock className="w-4 h-4 text-white" />
-          </div>
+          <Logo className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
           <span className="text-lg font-bold tracking-tight text-white">EnvSync</span>
         </div>
         
@@ -341,9 +340,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col items-center md:items-start gap-3">
             <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => navigate('/')}>
-              <div className="w-7 h-7 bg-gradient-to-tr from-purple-600 to-blue-500 rounded flex items-center justify-center">
-                <Lock className="w-3.5 h-3.5 text-white" />
-              </div>
+              <Logo className="w-7 h-7" />
               <span className="text-lg font-bold text-white">EnvSync</span>
             </div>
             <p className="text-sm text-[#444] font-medium tracking-tight">Built for high-performance engineering teams. 100% offline-first.</p>
