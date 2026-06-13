@@ -70,16 +70,16 @@ export default function Landing() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-500"></span>
           </span>
-          100% LOCAL & OFFLINE-FIRST
+          LOCAL-FIRST. ZERO-TRUST BY DEFAULT.
         </div>
         
         <h1 className="text-5xl md:text-8xl font-extrabold tracking-tighter mb-8 leading-[0.95] text-white">
-          Secrets, localized.<br />
-          <span className="text-[#888]">Zero cloud. Zero leak.</span>
+          Secrets belong locally.<br />
+          <span className="text-[#888]">Not in the cloud.</span>
         </h1>
         
         <p className="text-lg md:text-xl text-[#888] max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-          EnvSync is a 100% local, offline-first environment manager. Spin up a secure config vault on your machine with one CLI command, or sync across teams via a local server.
+          EnvSync bridges the gap between local speed and team collaboration. Initialize an encrypted local config vault in one command, query secrets in memory via SDKs, and sync with your team on a local server.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -165,26 +165,26 @@ export default function Landing() {
       {/* Features Section */}
       <section className="py-40 px-8 max-w-7xl mx-auto border-t border-white/[0.05]">
         <div className="text-center mb-24">
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">All your secrets. Safely localized.</h2>
-          <p className="text-[#888] text-xl font-medium tracking-tight">100% Local. No Cloud Dependencies. Safe & Offline-First.</p>
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">Uncompromising local security.</h2>
+          <p className="text-[#888] text-xl font-medium tracking-tight">Everything you need to secure, sync, and inject secrets without the cloud.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
             { 
               icon: Zap, 
-              title: 'CLI-First Onboarding', 
-              desc: 'Run a single command to spin up your local database, daemon, and interactive dashboard in seconds.' 
+              title: 'Instant local boot', 
+              desc: 'A single CLI command provisions your local SQLite datastore, daemon, and rich console interface.' 
             },
             { 
               icon: Shield, 
-              title: '100% Local & Private', 
-              desc: 'Secrets are stored on your machine or local server using AES-256. Perfect for air-gapped development.' 
+              title: 'Air-gapped security', 
+              desc: 'Secrets are sealed locally with AES-256 encryption. Perfect for high-compliance and offline environments.' 
             },
             { 
               icon: Code, 
-              title: 'Zero-Overhead SDKs', 
-              desc: 'Import our Node.js and Python SDKs to query secrets on-the-fly with automatic production fallbacks.' 
+              title: 'Dynamic runtime injection', 
+              desc: 'Query credentials in Node.js or Python on-the-fly. Zero disk writes, zero .env commits, and auto production fallbacks.' 
             }
           ].map((card, i) => (
             <div key={i} className="group p-10 rounded-3xl border border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.02] transition-all duration-300">
@@ -214,23 +214,23 @@ export default function Landing() {
             {[
               { 
                 icon: Terminal, 
-                title: 'Init with CLI', 
-                desc: 'Initialize the local server and SQLite database on your machine using our lightweight CLI tool.' 
+                title: 'One-Command Bootstrap', 
+                desc: 'Provision a local SQLite instance and background daemon on your machine in seconds.' 
               },
               { 
                 icon: Layers, 
-                title: 'Configure via Web UI', 
-                desc: 'Access your local dashboard to manage projects, create environments, and add configuration secrets.' 
+                title: 'Manage in the Local UI', 
+                desc: 'Control environments, define variables, and inspect access logs in a sleek localhost dashboard.' 
               },
               { 
                 icon: Code, 
-                title: 'Access directly in Code', 
-                desc: 'Use the Node/Python SDK in your app to fetch secrets without writing static .env files to disk.' 
+                title: 'Zero-Disk Runtime Fetch', 
+                desc: 'Read variables directly in memory via SDKs. Keep raw secrets off the filesystem and git trees.' 
               },
               { 
                 icon: Shield, 
-                title: 'Zero-Change Production', 
-                desc: 'In production, the SDK automatically falls back to standard system environment variables.' 
+                title: 'Transparent Deployment', 
+                desc: 'No code rewrite. The SDK automatically falls back to system environment variables in production.' 
               }
             ].map((step, i) => (
               <div key={i} className="relative z-10 flex flex-col">
@@ -256,17 +256,17 @@ export default function Landing() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-10 leading-[1.1]">
-              Built for Developers.<br />
-              100% Local-First.
+              Built for developers.<br />
+              Engineered for speed.
             </h2>
             <div className="grid grid-cols-1 gap-6">
               {[
-                'SQLite & PostgreSQL support',
-                'AES-256 local encryption',
-                'Zero-overhead memory caching',
-                'Node.js & Python SDKs',
-                'Single-command local server deployment',
-                'Zero third-party cloud dependency'
+                'Dual database engine (SQLite / PostgreSQL)',
+                'AES-256-GCM local-first encryption',
+                'Sub-millisecond memory cache layer',
+                'Native Node.js & Python SDK packages',
+                'Single-command self-hosted server',
+                'Zero telemetry & cloud dependencies'
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-1 h-1 rounded-full bg-white opacity-40" />
@@ -285,7 +285,7 @@ export default function Landing() {
               <div className="bg-[#111] border-b border-white/[0.05] px-4 py-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                    <Code className="w-3.5 h-3.5 text-blue-400" />
-                   <span className="text-[10px] font-bold text-[#666] tracking-widest uppercase">envsync-sdk v1.0.0</span>
+                   <span className="text-[10px] font-bold text-[#666] tracking-widest uppercase">envsync v1.0.0</span>
                 </div>
                 <div className="flex gap-1">
                    {[1, 2, 3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-[#333]" />)}
@@ -312,8 +312,8 @@ export default function Landing() {
                   {[1, 2, 3].map(n => <span key={n}>{n}</span>)}
                 </div>
                 <div className="pl-6 flex flex-col">
-                  <p className="text-[#a5d6ff]"><span className="text-[#ff7b72]">import</span> es <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">'envsync-sdk'</span></p>
-                  <p className="mt-4 text-[#8b949e]">// Fetches from local daemon in dev, system env in prod</p>
+                  <p className="text-[#a5d6ff]"><span className="text-[#ff7b72]">import</span> es <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">'envsync'</span></p>
+                  <p className="mt-4 text-[#8b949e]">// Fetch secret directly to memory with zero filesystem footprint</p>
                   <p className="text-[#c9d1d9]"><span className="text-[#ff7b72]">const</span> dbPassword = <span className="text-[#ff7b72]">await</span> es.<span className="text-[#d2a8ff]">getSecret</span>(<span className="text-[#a5d6ff]">'DATABASE_URL'</span>)</p>
                 </div>
               </div>
@@ -328,7 +328,7 @@ export default function Landing() {
           <div className="absolute inset-0 bg-white/[0.01] opacity-0 group-hover:opacity-100 transition-opacity" />
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Developer Documentation</h2>
           <p className="text-[#888] mb-12 max-w-xl mx-auto font-medium text-lg leading-relaxed">
-            Local setup guides. SDK references. Team hosting instructions. Learn how to configure EnvSync on localhost or deploy it across your internal server.
+            Comprehensive setup guides, SDK references, and internal network deployment patterns. Deploy EnvSync on localhost or a shared homelab in minutes.
           </p>
           <Button className="h-12 px-12 bg-white text-black hover:bg-[#e1e1e1] border-none font-bold rounded-full">
             View Docs
@@ -346,7 +346,7 @@ export default function Landing() {
               </div>
               <span className="text-lg font-bold text-white">EnvSync</span>
             </div>
-            <p className="text-sm text-[#444] font-medium tracking-tight">Built for developers by developers. 100% offline-first.</p>
+            <p className="text-sm text-[#444] font-medium tracking-tight">Built for high-performance engineering teams. 100% offline-first.</p>
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-[11px] font-bold tracking-[0.2em] uppercase text-[#444]">
