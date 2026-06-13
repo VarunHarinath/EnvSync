@@ -172,7 +172,7 @@ export default function Landing() {
             { 
               icon: Zap, 
               title: 'Local-First Storage', 
-              desc: 'Store configuration variables in a local, encrypted SQLite vault on your machine. No external server required.' 
+              desc: 'Store configuration variables in a local, encrypted PostgreSQL database. Keep your data private and fully self-hosted.' 
             },
             { 
               icon: Shield, 
@@ -213,7 +213,7 @@ export default function Landing() {
               { 
                 icon: Terminal, 
                 title: 'Initialize locally', 
-                desc: 'Run a single CLI command to start the EnvSync local daemon and initialize an encrypted SQLite datastore.' 
+                desc: 'Run a single CLI command to start the EnvSync local daemon and initialize your secure PostgreSQL connection.' 
               },
               { 
                 icon: Layers, 
@@ -259,7 +259,7 @@ export default function Landing() {
             </h2>
             <div className="grid grid-cols-1 gap-6">
               {[
-                'SQLite database for local development',
+                'PostgreSQL database architecture',
                 'AES-256 local-first configuration encryption',
                 'In-memory secret caching with zero latency',
                 'Lightweight Node.js & Python SDK libraries',
