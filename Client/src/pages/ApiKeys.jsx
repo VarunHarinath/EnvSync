@@ -19,7 +19,7 @@ const generateKey = () => {
   const bytes = new Uint8Array(24);
   window.crypto.getRandomValues(bytes);
   const raw = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-  return `sk_live_${raw}`;
+  return `masked_value_${raw}`;
 };
 
 // Helper to hash a key

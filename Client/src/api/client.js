@@ -62,7 +62,7 @@ export const MOCK_DB = {
       id: "sec_2",
       project_id: "proj_1",
       name: "STRIPE_KEY",
-      value: "sk_live_51M...",
+      value: "masked_value_51M...",
       updated_at: "2023-10-21T10:00:00Z",
     },
     {
@@ -86,7 +86,7 @@ export const MOCK_DB = {
       id: "key_2",
       project_id: "proj_1",
       environment_id: "env_2",
-      key_prefix: "sk_test_5678",
+      key_prefix: "masked_test_5678",
       created_at: "2023-10-26T15:30:00Z",
       status: "active",
     },
