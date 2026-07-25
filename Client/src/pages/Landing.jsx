@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Shield, 
-  Zap, 
-  Globe, 
-  Lock, 
-  ArrowRight, 
-  Github, 
-  Database, 
-  Key, 
-  Layers, 
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Shield,
+  Zap,
+  Globe,
+  Lock,
+  ArrowRight,
+  Github,
+  Database,
+  Key,
+  Layers,
   Terminal,
   Command,
   Activity,
@@ -25,25 +25,54 @@ import {
   ExternalLink,
   ChevronRight,
   Eye,
-  RefreshCw
-} from 'lucide-react';
-import Button from '../components/common/Button';
-import Logo from '../components/common/Logo';
+  RefreshCw,
+} from "lucide-react";
+import Button from "../components/common/Button";
+import Logo from "../components/common/Logo";
 
 export default function Landing() {
   const navigate = useNavigate();
-  
+
   // State for interactive SDK playground
-  const [activeTab, setActiveTab] = useState('node');
+  const [activeTab, setActiveTab] = useState("node");
   const [copiedTab, setCopiedTab] = useState(false);
 
   // State for interactive dashboard mockup
   const [revealedSecret, setRevealedSecret] = useState(null);
   const [mockSecrets, setMockSecrets] = useState([
-    { id: 1, key: 'DATABASE_URL', val: 'postgresql://db_user:••••••••••••@db-1.internal:5432/production', fullVal: 'postgresql://db_user:m4ng0_s3cr3t_p4ss@db-1.internal:5432/production', env: 'Production', active: true },
-    { id: 2, key: 'PAYMENT_PROVIDER_KEY', val: 'masked_value_••••••••••••••••••••••••3a9c', fullVal: 'masked_value_51P3m9G1v2k4F7a9c8b7d6e5f4a3c2b1', env: 'Production', active: true },
-    { id: 3, key: 'AWS_ACCESS_KEY_ID', val: 'AKIA••••••••••••••••4N2X', fullVal: 'AKIA3M9G1V2K4F7A9C8B4N2X', env: 'Production', active: true },
-    { id: 4, key: 'JWT_SIGNING_KEY', val: 'jwt_sec_••••••••••••••••••••••••92ab', fullVal: 'jwt_sec_9d8e7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2a192ab', env: 'Staging', active: true }
+    {
+      id: 1,
+      key: "DATABASE_URL",
+      val: "postgresql://db_user:••••••••••••@db-1.internal:5432/production",
+      fullVal:
+        "postgresql://db_user:m4ng0_s3cr3t_p4ss@db-1.internal:5432/production",
+      env: "Production",
+      active: true,
+    },
+    {
+      id: 2,
+      key: "PAYMENT_SECRET_KEY",
+      val: "masked_value_••••••••••••••••••••••••3a9c",
+      fullVal: "masked_value_51P3m9G1v2k4F7a9c8b7d6e5f4a3c2b1",
+      env: "Production",
+      active: true,
+    },
+    {
+      id: 3,
+      key: "CLOUD_ACCESS_KEY_ID",
+      val: "AKIA••••••••••••••••4N2X",
+      fullVal: "AKIA3M9G1V2K4F7A9C8B4N2X",
+      env: "Production",
+      active: true,
+    },
+    {
+      id: 4,
+      key: "JWT_SIGNING_KEY",
+      val: "jwt_sec_••••••••••••••••••••••••92ab",
+      fullVal: "jwt_sec_9d8e7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2a192ab",
+      env: "Staging",
+      active: true,
+    },
   ]);
 
   const handleCopyCode = (codeText) => {
@@ -53,14 +82,14 @@ export default function Landing() {
   };
 
   const handleLaunchConsole = () => {
-    window.open('http://localhost:5173/projects', '_blank');
+    window.open("http://localhost:5173/projects", "_blank");
   };
 
   const sdkSnippets = {
     node: {
-      lang: 'JavaScript',
-      title: 'envsync-node-sdk',
-      cmd: 'npm install @envsync/node',
+      lang: "JavaScript",
+      title: "envsync-node-sdk",
+      cmd: "npm install @envsync/node",
       code: `import es from '@envsync/node';
 
 // Initialize with zero filesystem footprint
@@ -71,12 +100,12 @@ await es.init({
 
 // Secrets injected dynamically in-memory
 const dbPassword = await es.getSecret('DATABASE_URL');
-`
+`,
     },
     python: {
-      lang: 'Python',
-      title: 'envsync-python',
-      cmd: 'pip install envsync-sdk',
+      lang: "Python",
+      title: "envsync-python",
+      cmd: "pip install envsync-sdk",
       code: `import envsync as es
 
 # Initialize the secure memory vault
@@ -87,19 +116,19 @@ es.init(
 
 # Access secrets without writing to disk
 db_password = es.get_secret("DATABASE_URL")
-`
+`,
     },
     cli: {
-      lang: 'CLI',
-      title: 'envsync-cli',
-      cmd: 'npm install -g envsync-cli',
+      lang: "CLI",
+      title: "envsync-cli",
+      cmd: "npm install -g envsync-cli",
       code: `# Initialize database connection and boot application daemon
 envsync init --port 8080 --db postgresql://localhost:5432/envsync
 
 # Start local control plane dashboard
 envsync start
-`
-    }
+`,
+    },
   };
 
   const handleToggleRevealSecret = (id) => {
@@ -121,29 +150,49 @@ envsync start
 
       {/* Navigation */}
       <nav className="relative z-50 flex items-center justify-between px-6 md:px-12 py-5 max-w-7xl mx-auto border-b border-white/[0.04] bg-black/40 backdrop-blur-xl sticky top-0">
-        <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
+        <div
+          className="flex items-center gap-3 group cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <Logo className="w-8 h-8 group-hover:scale-110 transition-all duration-300" />
-          <span className="text-xl font-bold tracking-tight text-white bg-clip-text">EnvSync</span>
+          <span className="text-xl font-bold tracking-tight text-white bg-clip-text">
+            EnvSync
+          </span>
         </div>
-        
+
         <div className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-[13px] font-medium text-[#888] hover:text-white transition-colors">Documentation</a>
-          <a href="#" className="text-[13px] font-medium text-[#888] hover:text-white transition-colors">Security Model</a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[13px] font-medium text-[#888] hover:text-white transition-colors">
+          <a
+            href="#"
+            className="text-[13px] font-medium text-[#888] hover:text-white transition-colors"
+          >
+            Documentation
+          </a>
+          <a
+            href="#"
+            className="text-[13px] font-medium text-[#888] hover:text-white transition-colors"
+          >
+            Security Model
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-[13px] font-medium text-[#888] hover:text-white transition-colors"
+          >
             <Github className="w-4 h-4" />
             GitHub
           </a>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="text-[13px] text-[#888] hover:text-white hover:bg-white/[0.03] px-3.5 py-1.5 rounded-full"
             onClick={handleLaunchConsole}
           >
             Sign In
           </Button>
-          <Button 
+          <Button
             className="relative overflow-hidden bg-white text-black hover:bg-white/95 px-5 py-2 text-[13px] font-bold rounded-full border-none group transition-all"
             onClick={handleLaunchConsole}
           >
@@ -161,29 +210,31 @@ envsync start
           </span>
           ENTERPRISE-GRADE SELF-HOSTED CONFIGURATION
         </div>
-        
+
         <h1 className="text-4xl sm:text-6xl md:text-[80px] font-black tracking-tight leading-[0.9] mb-8 text-white max-w-4xl mx-auto">
           The secrets manager <br className="hidden sm:inline" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] via-[#818CF8] to-[#60A5FA]">
             for modern dev teams.
           </span>
         </h1>
-        
+
         <p className="text-base sm:text-lg md:text-xl text-[#888] max-w-3xl mx-auto mb-12 leading-relaxed font-normal">
-          EnvSync is a high-performance, open-source control plane for your environment variables. 
-          Deploy air-gapped on your private PostgreSQL infrastructure, fetch config values in-memory, 
-          and keep production secrets off developer hard drives.
+          EnvSync is a high-performance, open-source control plane for your
+          environment variables. Deploy air-gapped on your private PostgreSQL
+          infrastructure, fetch config values in-memory, and keep production
+          secrets off developer hard drives.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button 
+          <Button
             className="h-12 px-8 bg-white text-black hover:bg-white/95 text-[14px] font-bold rounded-full group shadow-[0_0_20px_rgba(129,140,248,0.25)] border-none"
             onClick={handleLaunchConsole}
           >
-            Launch Console <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            Launch Console{" "}
+            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="h-12 px-8 text-[14px] border-white/[0.08] text-white hover:bg-white/[0.04] font-medium rounded-full bg-transparent hover:border-white/20"
           >
             Read API Docs
@@ -193,7 +244,7 @@ envsync start
         {/* Dynamic MacOS Mockup Window (With Interactive Secret Reveal) */}
         <div className="mt-20 relative group mx-auto max-w-4xl">
           <div className="absolute -inset-1 bg-gradient-to-tr from-[#C084FC] via-[#818CF8] to-[#60A5FA] rounded-2xl blur-3xl opacity-20 group-hover:opacity-25 transition-opacity duration-1000" />
-          
+
           <div className="relative bg-[#050505]/90 border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] backdrop-blur-md">
             {/* MacOS title bar */}
             <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/[0.04] bg-[#0c0c0c]/80">
@@ -210,17 +261,21 @@ envsync start
                 <div className="w-3 h-3" />
               </div>
             </div>
-            
+
             <div className="flex flex-col md:flex-row">
               {/* Mockup Sidebar */}
               <div className="w-full md:w-52 border-r border-white/[0.04] flex flex-col p-4 gap-4 bg-[#070707] text-left">
                 <div className="flex items-center gap-2 px-2 py-1 rounded bg-white/[0.03] border border-white/[0.05]">
                   <Database className="w-4 h-4 text-[#818CF8]" />
-                  <span className="text-xs font-bold text-white">Payment Gateway</span>
+                  <span className="text-xs font-bold text-white">
+                    Payment Gateway
+                  </span>
                 </div>
-                
+
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-semibold text-[#444] px-2 uppercase tracking-wider">Resources</span>
+                  <span className="text-[10px] font-semibold text-[#444] px-2 uppercase tracking-wider">
+                    Resources
+                  </span>
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2 text-xs text-white bg-white/[0.02] border border-white/[0.04] px-2 py-1.5 rounded-md font-medium">
                       <Lock className="w-3.5 h-3.5 text-[#C084FC]" />
@@ -240,15 +295,19 @@ envsync start
                 <div className="mt-auto pt-4 border-t border-white/[0.03] space-y-2 px-2">
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-[#444]">Vault Latency</span>
-                    <span className="font-mono text-green-400 font-bold">0.8ms</span>
+                    <span className="font-mono text-green-400 font-bold">
+                      0.8ms
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-[#444]">Status</span>
-                    <span className="font-mono text-green-400 font-bold">Secure</span>
+                    <span className="font-mono text-green-400 font-bold">
+                      Secure
+                    </span>
                   </div>
                 </div>
               </div>
-              
+
               {/* Mockup Dashboard Content */}
               <div className="flex-1 p-6 md:p-8 min-h-[380px] bg-[#020202] text-left">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
@@ -259,14 +318,16 @@ envsync start
                         CONNECTED
                       </span>
                     </h3>
-                    <p className="text-xs text-[#555] mt-0.5">Manage encrypted variables mapping to PostgreSQL vault.</p>
+                    <p className="text-xs text-[#555] mt-0.5">
+                      Manage encrypted variables mapping to PostgreSQL vault.
+                    </p>
                   </div>
                   <div className="flex gap-2 w-full sm:w-auto">
                     <div className="relative flex-1 sm:flex-initial">
                       <Search className="w-3.5 h-3.5 text-[#444] absolute left-2.5 top-2.5" />
-                      <input 
-                        type="text" 
-                        placeholder="Search secrets..." 
+                      <input
+                        type="text"
+                        placeholder="Search secrets..."
                         disabled
                         className="bg-white/[0.02] border border-white/[0.06] rounded-md pl-8 pr-3 py-1.5 text-xs text-white placeholder-[#333] w-full"
                       />
@@ -280,34 +341,36 @@ envsync start
                 {/* Interactive Table Mock */}
                 <div className="space-y-2.5">
                   {mockSecrets.map((s) => (
-                    <div 
-                      key={s.id} 
+                    <div
+                      key={s.id}
                       className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border transition-all duration-300 ${
-                        revealedSecret === s.id 
-                          ? 'border-[#818CF8]/30 bg-white/[0.02]' 
-                          : 'border-white/[0.04] bg-white/[0.01] hover:border-white/[0.08]'
+                        revealedSecret === s.id
+                          ? "border-[#818CF8]/30 bg-white/[0.02]"
+                          : "border-white/[0.04] bg-white/[0.01] hover:border-white/[0.08]"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-green-500/60" />
                         <div className="flex flex-col">
-                          <span className="text-xs font-mono font-bold text-white">{s.key}</span>
+                          <span className="text-xs font-mono font-bold text-white">
+                            {s.key}
+                          </span>
                           <span className="text-[11px] font-mono text-[#555] mt-1 select-all break-all max-w-md">
                             {revealedSecret === s.id ? s.fullVal : s.val}
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3.5 mt-3 sm:mt-0 justify-end">
                         <span className="text-[10px] font-bold text-[#818CF8]/80 bg-[#818CF8]/5 px-2 py-0.5 rounded border border-[#818CF8]/10 font-mono">
                           {s.env}
                         </span>
-                        <button 
+                        <button
                           onClick={() => handleToggleRevealSecret(s.id)}
                           className="px-2.5 py-1 text-[10px] font-semibold text-white/60 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] rounded border border-white/[0.05] flex items-center gap-1.5 transition-colors"
                         >
                           <Eye className="w-3 h-3" />
-                          {revealedSecret === s.id ? 'Hide' : 'Reveal'}
+                          {revealedSecret === s.id ? "Hide" : "Reveal"}
                         </button>
                       </div>
                     </div>
@@ -322,33 +385,40 @@ envsync start
       {/* OpenAI-style Interactive SDK Playground */}
       <section className="py-28 px-6 max-w-7xl mx-auto border-t border-white/[0.04] relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          
           <div className="lg:col-span-5 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C084FC]/10 border border-[#C084FC]/25 text-[11px] font-bold text-[#C084FC]">
               <Code className="w-3.5 h-3.5" /> DEVELOPER INTEGRATION
             </div>
-            
+
             <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
               In-memory injection. <br />
               Zero config files.
             </h2>
-            
+
             <p className="text-[#888] leading-relaxed text-sm sm:text-base">
-              Say goodbye to `.env` files that accidentally leak to GitHub. The EnvSync SDK fetches variables directly in-memory, establishing an authenticated connection to your PostgreSQL datastore over TLS.
+              Say goodbye to `.env` files that accidentally leak to GitHub. The
+              EnvSync SDK fetches variables directly in-memory, establishing an
+              authenticated connection to your PostgreSQL datastore over TLS.
             </p>
-            
+
             <div className="space-y-3 pt-2">
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm font-medium text-white/80">No secret footprint on developer hard drives</span>
+                <span className="text-sm font-medium text-white/80">
+                  No secret footprint on developer hard drives
+                </span>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm font-medium text-white/80">Sub-millisecond runtime latency</span>
+                <span className="text-sm font-medium text-white/80">
+                  Sub-millisecond runtime latency
+                </span>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm font-medium text-white/80">Automatic system environment fallback</span>
+                <span className="text-sm font-medium text-white/80">
+                  Automatic system environment fallback
+                </span>
               </div>
             </div>
           </div>
@@ -362,20 +432,28 @@ envsync start
                   {Object.keys(sdkSnippets).map((tab) => (
                     <button
                       key={tab}
-                      onClick={() => { setActiveTab(tab); setCopiedTab(false); }}
+                      onClick={() => {
+                        setActiveTab(tab);
+                        setCopiedTab(false);
+                      }}
                       className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                        activeTab === tab 
-                          ? 'text-white bg-white/[0.06] border border-white/[0.06]' 
-                          : 'text-[#555] hover:text-[#bbb] hover:bg-white/[0.01]'
+                        activeTab === tab
+                          ? "text-white bg-white/[0.06] border border-white/[0.06]"
+                          : "text-[#555] hover:text-[#bbb] hover:bg-white/[0.01]"
                       }`}
                     >
                       {sdkSnippets[tab].lang}
                     </button>
                   ))}
                 </div>
-                
+
                 <div className="flex gap-1.5">
-                  {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#222]" />)}
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="w-1.5 h-1.5 rounded-full bg-[#222]"
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -385,7 +463,7 @@ envsync start
                   <Terminal className="w-3.5 h-3.5 text-[#818CF8]" />
                   <span>{sdkSnippets[activeTab].cmd}</span>
                 </div>
-                <button 
+                <button
                   onClick={() => handleCopyCode(sdkSnippets[activeTab].cmd)}
                   className="hover:text-white transition-colors"
                 >
@@ -396,48 +474,106 @@ envsync start
               {/* Code Editor Body */}
               <div className="p-6 sm:p-8 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto bg-[#020202]">
                 <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] text-[#444] uppercase tracking-widest">{sdkSnippets[activeTab].title}</span>
-                  <button 
+                  <span className="text-[10px] text-[#444] uppercase tracking-widest">
+                    {sdkSnippets[activeTab].title}
+                  </span>
+                  <button
                     onClick={() => handleCopyCode(sdkSnippets[activeTab].code)}
                     className="px-2.5 py-1 text-[10px] text-[#818CF8] bg-[#818CF8]/10 hover:bg-[#818CF8]/15 border border-[#818CF8]/20 rounded transition-all font-semibold flex items-center gap-1.5"
                   >
-                    {copiedTab ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
-                    {copiedTab ? 'Copied!' : 'Copy Code'}
+                    {copiedTab ? (
+                      <Check className="w-3 h-3 text-green-400" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    {copiedTab ? "Copied!" : "Copy Code"}
                   </button>
                 </div>
-                
+
                 <pre className="text-white/90">
-                  {activeTab === 'node' && (
+                  {activeTab === "node" && (
                     <code>
-                      <span className="text-[#F472B6]">import</span> es <span className="text-[#F472B6]">from</span> <span className="text-[#60A5FA]">'@envsync/node'</span>;<br /><br />
-                      <span className="text-[#9CA3AF]">// Initialize with zero filesystem footprint</span><br />
-                      <span className="text-[#F472B6]">await</span> es.<span className="text-[#C084FC]">init</span>({`{`}<br />
-                      &nbsp;&nbsp;apiKey: process.env.<span className="text-[#818CF8]">ENVSYNC_API_KEY</span>,<br />
-                      &nbsp;&nbsp;environment: <span className="text-[#60A5FA]">'production'</span><br />
-                      {`}`});<br /><br />
-                      <span className="text-[#9CA3AF]">// Secrets injected dynamically in-memory</span><br />
-                      <span className="text-[#F472B6]">const</span> dbPassword = <span className="text-[#F472B6]">await</span> es.<span className="text-[#C084FC]">getSecret</span>(<span className="text-[#60A5FA]">'DATABASE_URL'</span>);
+                      <span className="text-[#F472B6]">import</span> es{" "}
+                      <span className="text-[#F472B6]">from</span>{" "}
+                      <span className="text-[#60A5FA]">'@envsync/node'</span>;
+                      <br />
+                      <br />
+                      <span className="text-[#9CA3AF]">
+                        // Initialize with zero filesystem footprint
+                      </span>
+                      <br />
+                      <span className="text-[#F472B6]">await</span> es.
+                      <span className="text-[#C084FC]">init</span>({`{`}
+                      <br />
+                      &nbsp;&nbsp;apiKey: process.env.
+                      <span className="text-[#818CF8]">ENVSYNC_API_KEY</span>,
+                      <br />
+                      &nbsp;&nbsp;environment:{" "}
+                      <span className="text-[#60A5FA]">'production'</span>
+                      <br />
+                      {`}`});
+                      <br />
+                      <br />
+                      <span className="text-[#9CA3AF]">
+                        // Secrets injected dynamically in-memory
+                      </span>
+                      <br />
+                      <span className="text-[#F472B6]">const</span> dbPassword ={" "}
+                      <span className="text-[#F472B6]">await</span> es.
+                      <span className="text-[#C084FC]">getSecret</span>(
+                      <span className="text-[#60A5FA]">'DATABASE_URL'</span>);
                     </code>
                   )}
 
-                  {activeTab === 'python' && (
+                  {activeTab === "python" && (
                     <code>
-                      <span className="text-[#F472B6]">import</span> envsync <span className="text-[#F472B6]">as</span> es<br /><br />
-                      <span className="text-[#9CA3AF]"># Initialize the secure memory vault</span><br />
+                      <span className="text-[#F472B6]">import</span> envsync{" "}
+                      <span className="text-[#F472B6]">as</span> es
+                      <br />
+                      <br />
+                      <span className="text-[#9CA3AF]">
+                        # Initialize the secure memory vault
+                      </span>
+                      <br />
                       es.<span className="text-[#C084FC]">init</span>(<br />
-                      &nbsp;&nbsp;&nbsp;&nbsp;api_key=<span className="text-[#60A5FA]">"es_live_6f7d9a3..."</span>,<br />
-                      &nbsp;&nbsp;&nbsp;&nbsp;environment=<span className="text-[#60A5FA]">"production"</span><br />
-                      )<br /><br />
-                      <span className="text-[#9CA3AF]"># Access secrets without writing to disk</span><br />
-                      db_password = es.<span className="text-[#C084FC]">get_secret</span>(<span className="text-[#60A5FA]">"DATABASE_URL"</span>)
+                      &nbsp;&nbsp;&nbsp;&nbsp;api_key=
+                      <span className="text-[#60A5FA]">
+                        "es_live_6f7d9a3..."
+                      </span>
+                      ,<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;environment=
+                      <span className="text-[#60A5FA]">"production"</span>
+                      <br />
+                      )<br />
+                      <br />
+                      <span className="text-[#9CA3AF]">
+                        # Access secrets without writing to disk
+                      </span>
+                      <br />
+                      db_password = es.
+                      <span className="text-[#C084FC]">get_secret</span>(
+                      <span className="text-[#60A5FA]">"DATABASE_URL"</span>)
                     </code>
                   )}
 
-                  {activeTab === 'cli' && (
+                  {activeTab === "cli" && (
                     <code>
-                      <span className="text-[#9CA3AF]"># Initialize database connection and boot application daemon</span><br />
-                      envsync init --port <span className="text-[#818CF8]">8080</span> --db <span className="text-[#60A5FA]">"postgresql://localhost:5432/envsync"</span><br /><br />
-                      <span className="text-[#9CA3AF]"># Start local control plane dashboard</span><br />
+                      <span className="text-[#9CA3AF]">
+                        # Initialize database connection and boot application
+                        daemon
+                      </span>
+                      <br />
+                      envsync init --port{" "}
+                      <span className="text-[#818CF8]">8080</span> --db{" "}
+                      <span className="text-[#60A5FA]">
+                        "postgresql://localhost:5432/envsync"
+                      </span>
+                      <br />
+                      <br />
+                      <span className="text-[#9CA3AF]">
+                        # Start local control plane dashboard
+                      </span>
+                      <br />
                       envsync start
                     </code>
                   )}
@@ -445,7 +581,6 @@ envsync start
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -459,44 +594,47 @@ envsync start
             Engineered for high throughput.
           </h2>
           <p className="text-[#888] text-base sm:text-lg">
-            A secrets server shouldn't add latency to your deployments. EnvSync balances performance benchmarks with cryptographic security.
+            A secrets server shouldn't add latency to your deployments. EnvSync
+            balances performance benchmarks with cryptographic security.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
-              metric: '< 1.2ms',
-              label: 'Average Fetch Latency',
-              desc: 'High-speed in-memory indexing bypasses database read-locks for near-zero runtime execution delay.'
+              metric: "< 1.2ms",
+              label: "Average Fetch Latency",
+              desc: "High-speed in-memory indexing bypasses database read-locks for near-zero runtime execution delay.",
             },
             {
-              metric: 'AES-256',
-              label: 'Encryption Standard',
-              desc: 'Secrets are sealed with client-side authenticated AES-256-GCM prior to database persistence.'
+              metric: "AES-256",
+              label: "Encryption Standard",
+              desc: "Secrets are sealed with client-side authenticated AES-256-GCM prior to database persistence.",
             },
             {
-              metric: '100%',
-              label: 'Self-Hosted Control',
-              desc: 'Run completely offline. Keep API transactions and keys within your physical server boundaries.'
+              metric: "100%",
+              label: "Self-Hosted Control",
+              desc: "Run completely offline. Keep API transactions and keys within your physical server boundaries.",
             },
             {
-              metric: 'Zero',
-              label: 'Cloud Dependencies',
-              desc: 'No external SaaS requests, tracking scripts, or telemetry telemetry pings. Absolute server sovereignty.'
-            }
+              metric: "Zero",
+              label: "Cloud Dependencies",
+              desc: "No external SaaS requests, tracking scripts, or telemetry telemetry pings. Absolute server sovereignty.",
+            },
           ].map((item, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="relative p-8 rounded-2xl border border-white/[0.04] bg-[#050505] hover:bg-white/[0.01] hover:border-white/[0.08] transition-all group overflow-hidden"
             >
               {/* Subtle hover accent line */}
               <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#818CF8]/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-              
+
               <div className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-tr from-[#C084FC] to-[#60A5FA] tracking-tight mb-4">
                 {item.metric}
               </div>
-              <h4 className="text-sm font-bold text-white mb-2">{item.label}</h4>
+              <h4 className="text-sm font-bold text-white mb-2">
+                {item.label}
+              </h4>
               <p className="text-xs text-[#666] leading-relaxed">{item.desc}</p>
             </div>
           ))}
@@ -510,17 +648,20 @@ envsync start
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C084FC]/10 border border-[#C084FC]/25 text-[11px] font-bold text-[#C084FC]">
               <Shield className="w-3.5 h-3.5" /> SECURITY SPECIFICATIONS
             </div>
-            
+
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
               Strict access logic. Absolute integrity.
             </h2>
-            
+
             <p className="text-[#888] text-sm leading-relaxed">
-              Designed from the database schema up to prevent leaks, maintain structural references, and optimize decryption pathways.
+              Designed from the database schema up to prevent leaks, maintain
+              structural references, and optimize decryption pathways.
             </p>
-            
+
             <div className="p-6 rounded-2xl border border-white/[0.04] bg-[#050505] space-y-4">
-              <h5 className="text-xs font-bold text-[#818CF8] tracking-widest uppercase">PostgreSQL Schema Design</h5>
+              <h5 className="text-xs font-bold text-[#818CF8] tracking-widest uppercase">
+                PostgreSQL Schema Design
+              </h5>
               <div className="space-y-2 text-xs text-[#555] font-mono">
                 <div className="flex justify-between">
                   <span>PROJECTS</span>
@@ -542,31 +683,38 @@ envsync start
             {[
               {
                 icon: Key,
-                title: 'Granular Scoping',
-                desc: 'Restrict API token authorizations to individual environments (e.g. production-only read access), reducing the blast radius of credentials.'
+                title: "Granular Scoping",
+                desc: "Restrict API token authorizations to individual environments (e.g. production-only read access), reducing the blast radius of credentials.",
               },
               {
                 icon: Layers,
-                title: 'Automatic SDK Fallback',
-                desc: 'If connection to your PostgreSQL daemon fails, the Client SDK reads from system environment variables, preventing server downtime.'
+                title: "Automatic SDK Fallback",
+                desc: "If connection to your PostgreSQL daemon fails, the Client SDK reads from system environment variables, preventing server downtime.",
               },
               {
                 icon: Database,
-                title: 'Relational Integrity',
-                desc: 'Atomic transactional operations in EnvSync make sure mapping table mutations either succeed completely or roll back.'
+                title: "Relational Integrity",
+                desc: "Atomic transactional operations in EnvSync make sure mapping table mutations either succeed completely or roll back.",
               },
               {
                 icon: Activity,
-                title: 'Access Audit Logs',
-                desc: 'Track exact queries, token readings, and variable configurations. Gain comprehensive visibility into when your keys are read.'
-              }
+                title: "Access Audit Logs",
+                desc: "Track exact queries, token readings, and variable configurations. Gain comprehensive visibility into when your keys are read.",
+              },
             ].map((feature, i) => (
-              <div key={i} className="p-8 rounded-2xl border border-white/[0.04] bg-[#020202] space-y-4 hover:border-white/[0.08] transition-colors">
+              <div
+                key={i}
+                className="p-8 rounded-2xl border border-white/[0.04] bg-[#020202] space-y-4 hover:border-white/[0.08] transition-colors"
+              >
                 <div className="w-10 h-10 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-center">
                   <feature.icon className="w-5 h-5 text-[#818CF8]" />
                 </div>
-                <h4 className="text-base font-bold text-white">{feature.title}</h4>
-                <p className="text-xs text-[#666] leading-relaxed">{feature.desc}</p>
+                <h4 className="text-base font-bold text-white">
+                  {feature.title}
+                </h4>
+                <p className="text-xs text-[#666] leading-relaxed">
+                  {feature.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -577,22 +725,23 @@ envsync start
       <section className="py-28 px-6 max-w-5xl mx-auto border-t border-white/[0.04] relative z-10">
         <div className="p-10 sm:p-20 rounded-[32px] border border-white/[0.06] bg-gradient-to-b from-[#080808]/80 to-black text-center relative overflow-hidden group shadow-[0_0_80px_rgba(129,140,248,0.05)]">
           <div className="absolute inset-0 bg-[#818CF8]/[0.01] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          
+
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-6">
             Get started in minutes.
           </h2>
           <p className="text-[#888] mb-10 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-            Ready to host your secrets manager? Check out the guides on local setups, SDK connections, and Homelab hosting.
+            Ready to host your secrets manager? Check out the guides on local
+            setups, SDK connections, and Homelab hosting.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
+            <Button
               className="h-12 px-8 bg-white text-black hover:bg-white/95 font-bold rounded-full border-none"
               onClick={handleLaunchConsole}
             >
               Launch Console
             </Button>
-            <Button 
+            <Button
               variant="outline"
               className="h-12 px-8 text-white hover:bg-white/[0.03] border-white/[0.08] hover:border-white/20 font-bold rounded-full bg-transparent"
             >
@@ -606,25 +755,59 @@ envsync start
       <footer className="relative z-10 pt-24 pb-12 px-6 border-t border-white/[0.04]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col items-center md:items-start gap-3">
-            <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => navigate('/')}>
+            <div
+              className="flex items-center gap-2.5 group cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <Logo className="w-7 h-7" />
               <span className="text-lg font-bold text-white">EnvSync</span>
             </div>
-            <p className="text-xs text-[#555] font-medium tracking-tight">Built for professional development teams. 100% offline-first.</p>
+            <p className="text-xs text-[#555] font-medium tracking-tight">
+              Built for professional development teams. 100% offline-first.
+            </p>
             <div className="flex flex-col items-center md:items-start gap-1 mt-1 text-[11px] text-[#666]">
-              <span>Support: <a href="mailto:support@envsync.me" className="text-[#888] hover:text-white transition-colors">support@envsync.me</a></span>
-              <span>Developer: <a href="mailto:varunharinath@envsync.me" className="text-[#888] hover:text-white transition-colors">varunharinath@envsync.me</a></span>
+              <span>
+                Support:{" "}
+                <a
+                  href="mailto:support@envsync.me"
+                  className="text-[#888] hover:text-white transition-colors"
+                >
+                  support@envsync.me
+                </a>
+              </span>
+              <span>
+                Developer:{" "}
+                <a
+                  href="mailto:varunharinath@envsync.me"
+                  className="text-[#888] hover:text-white transition-colors"
+                >
+                  varunharinath@envsync.me
+                </a>
+              </span>
             </div>
           </div>
-          
+
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-[10px] font-bold tracking-[0.2em] uppercase text-[#444]">
-            <a href="#" className="hover:text-white transition-colors">Documentation</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter / X</a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">
+              Documentation
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Twitter / X
+            </a>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              GitHub
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Privacy Policy
+            </a>
           </div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-[#333] font-bold tracking-[0.2em] uppercase">
           <p>© 2026 EnvSync Inc. Production Ready Infrastructure.</p>
           <p>Self-Hosted, Air-Gapped, Secure.</p>
