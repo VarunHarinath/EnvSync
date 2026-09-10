@@ -1,0 +1,1 @@
+import {client} from "./client";export const adminApi={users:()=>client("/users"),createUser:data=>client("/users",{body:data}),updateUser:(id,data)=>client(`/users/${id}`,{method:"PATCH",body:data}),audit:()=>client("/audit-logs"),settings:()=>client("/settings"),updateSettings:data=>client("/settings",{method:"PATCH",body:data})};

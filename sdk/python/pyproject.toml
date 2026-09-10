@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[project]
+name = "envsync"
+version = "1.0.0"
+description = "Official Python SDK for self-hosted EnvSync"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = []
+[tool.pytest.ini_options]
+testpaths = ["tests"]

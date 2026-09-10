@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {EnvSync,PermissionError} from "../src/index.js";
+test("gets and caches a secret",async()=>{let calls=0;const sdk=new EnvSync({apiKey:"es_live_example",baseUrl:"http://example",cacheTtl:1000,fetch:async()=>{calls++;return new Response(JSON.stringify({success:true,data:{value:"safe"}}))}});assert.equal(await sdk.get("A"),"safe");assert.equal(await sdk.get("A"),"safe");assert.equal(calls,1)});
+test("maps permission errors",async()=>{const sdk=new EnvSync({apiKey:"es_live_example",baseUrl:"http://example",fetch:async()=>new Response(JSON.stringify({error:{code:"FORBIDDEN",message:"no"}}),{status:403})});await assert.rejects(()=>sdk.get("A"),PermissionError)});

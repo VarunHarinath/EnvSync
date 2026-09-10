@@ -15,6 +15,7 @@ import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
 import { cn } from '../utils';
+import ShareResource from '../components/ShareResource';
 
 export default function Environments() {
   const { projectId } = useParams();
@@ -215,8 +216,6 @@ export default function Environments() {
       setIsSyncingSecrets(true);
 
       const previousAttached = [...attachedSecrets];
-      const removedAttachment = previousAttached.find(as => as.environment_secret_id === attachmentId);
-
       // Optimistic Update: Secrets list
       setAttachedSecrets(prev => prev.filter(as => as.environment_secret_id !== attachmentId));
 
@@ -320,6 +319,10 @@ export default function Environments() {
       >
         {selectedEnv && (
             <div className="space-y-6">
+                <div>
+                    <ShareResource type="environment" id={selectedEnv.id} name={selectedEnv.name} />
+                </div>
+
                 <div>
                     <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Metadata</h4>
                     <div className="bg-muted/30 p-4 rounded-md space-y-2 text-sm">
@@ -525,4 +528,3 @@ export default function Environments() {
     </div>
   );
 }
-

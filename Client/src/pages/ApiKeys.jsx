@@ -14,23 +14,6 @@ import DeleteConfirmationModal from '../components/common/DeleteConfirmationModa
 import { Plus, Trash2, Key, Copy, AlertTriangle } from 'lucide-react';
 import { cn } from '../utils';
 
-// Helper to generate a random key
-const generateKey = () => {
-  const bytes = new Uint8Array(24);
-  window.crypto.getRandomValues(bytes);
-  const raw = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-  return `masked_value_${raw}`;
-};
-
-// Helper to hash a key
-const hashKey = async (key) => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(key);
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-};
-
 const PillSelector = ({ options, selectedId, onChange }) => {
   if (!options || options.length === 0) return null;
   
@@ -96,13 +79,8 @@ export default function ApiKeys() {
     }
     setIsCreating(true);
     try {
-        const fullKey = generateKey();
-        const prefix = fullKey.substring(0, 7); // sk_live
-        const hash = await hashKey(fullKey);
-
-        await apiKeysApi.create(projectId, selectedEnvId, hash, prefix); 
-        
-        setCreatedKey(fullKey);
+        const result = await apiKeysApi.create(projectId, selectedEnvId);
+        setCreatedKey(result.key);
         setIsModalOpen(false);
         refetch();
     } catch (e) {

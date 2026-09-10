@@ -1,23 +1,26 @@
 {
   "name": "envsync-webservice",
-  "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
-  "author": "Varun Harinath Rudravally",
+  "version": "2.0.0",
+  "description": "Self-hosted EnvSync API",
+  "license": "Apache-2.0",
   "type": "module",
   "main": "index.js",
+  "bin": { "envsync": "cli/envsync.js" },
   "scripts": {
-    "dev": "nodemon --exec \"node --import ./Utilities/instrument.js\" index.js",
-    "start": "node --import ./Utilities/instrument.js index.js"
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "setup": "node cli/envsync.js setup",
+    "migrate": "node db/migrate.js",
+    "test": "NODE_ENV=test node --test test/**/*.test.js",
+    "check": "node --check index.js && node --check app.js"
   },
+  "engines": { "node": ">=20" },
   "dependencies": {
-    "@clerk/express": "^1.7.65",
-    "@sentry/node": "^10.36.0",
-    "@sentry/profiling-node": "^10.36.0",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "nodemon": "^3.1.11",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.1.12"
   }
 }

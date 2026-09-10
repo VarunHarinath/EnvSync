@@ -1,11 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
 
-let listeners = [];
-let memoryState = []; // Simple global state for toast to persist across re-renders if needed, 
-// though typically context is better. For simplicity in this scope, we'll use a simple event bus pattern or just local state if used at top level.
-// Actually, let's just make a simple custom hook that dispatches custom events, 
-// and a ToastContainer that listens.
-
 const TOAST_EVENT = 'envsync-toast';
 
 export function useToast() {

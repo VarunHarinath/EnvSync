@@ -6,9 +6,12 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import Button from '../components/common/Button';
 import { Server, Lock, Key, ArrowRight } from 'lucide-react';
 import Table from '../components/common/Table';
+import ShareResource from '../components/ShareResource';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
+  const { user } = useAuth();
   
   // Fetch Project
   const fetchProject = () => projectsApi.getById(projectId);
@@ -20,17 +23,20 @@ export default function ProjectDetail() {
   const quickLinks = [
     { label: 'Environments', icon: Server, to: `/projects/${projectId}/environments`, desc: 'Manage deployment environments' },
     { label: 'Secrets', icon: Lock, to: `/projects/${projectId}/secrets`, desc: 'Manage environment variables' },
-    { label: 'API Keys', icon: Key, to: `/projects/${projectId}/api-keys`, desc: 'Manage access keys' },
+    ...(user?.role === 'ADMIN' || user?.permissions?.can_pull_secrets ? [{ label: 'API Keys', icon: Key, to: `/projects/${projectId}/api-keys`, desc: 'Manage access keys' }] : []),
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
+      <div className="flex items-start justify-between gap-4">
+        <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">{project.name}</h1>
         <div className="text-muted-foreground text-sm flex gap-4">
             <span>ID: <code className="bg-muted px-1 py-0.5 rounded">{project.id}</code></span>
             <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
         </div>
+        </div>
+        <ShareResource type="project" id={project.id} name={project.name} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -56,7 +62,7 @@ export default function ProjectDetail() {
       <div className="rounded-lg border bg-card p-6">
         <h3 className="font-semibold mb-4">Project Overview</h3>
         <p className="text-muted-foreground">
-          This project contains mocked resources. Navigate to the sections above to manage them.
+          Manage this project's environments, encrypted secrets, application keys, and teammate access from the sections above.
         </p>
       </div>
     </div>

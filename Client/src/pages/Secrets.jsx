@@ -10,12 +10,15 @@ import Input from '../components/common/Input';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { Plus, Eye, EyeOff, Copy, Trash2, Lock, Edit2 } from 'lucide-react';
+import ShareResource from '../components/ShareResource';
 
-const SecretValue = ({ value }) => {
+const SecretValue = ({ secret }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [value, setValue] = useState(null);
   const { toast } = useToast();
 
   const handleCopy = () => {
+    if (!value) return;
     navigator.clipboard.writeText(value);
     toast({ title: 'Copied', description: 'Secret copied to clipboard.' });
   };
@@ -25,7 +28,7 @@ const SecretValue = ({ value }) => {
       <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
         {isVisible ? value : '••••••••••••••••'}
       </code>
-      <button onClick={() => setIsVisible(!isVisible)} className="text-muted-foreground hover:text-foreground">
+      <button aria-label={isVisible ? 'Hide secret' : 'Reveal secret'} onClick={async () => { if (isVisible) { setIsVisible(false); setValue(null); return; } const data = await secretsApi.reveal(secret.id); setValue(data.value); setIsVisible(true); window.setTimeout(() => { setIsVisible(false); setValue(null); }, 30000); }} className="text-muted-foreground hover:text-foreground">
         {isVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
       <button onClick={handleCopy} className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity">
@@ -85,7 +88,7 @@ export default function Secrets() {
 
   const openEditModal = (secret) => {
     setSelectedSecret(secret);
-    setForm({ name: secret.name, value: secret.value || '' });
+    setForm({ name: secret.name, value: '' });
     setIsEditModalOpen(true);
   };
 
@@ -102,13 +105,14 @@ export default function Secrets() {
 
   const columns = [
     { header: 'Key', accessorKey: 'name', className: 'font-medium font-mono text-xs' },
-    { header: 'Value', render: (row) => <SecretValue value={row.value || '******'} /> },
+    { header: 'Value', render: (row) => <SecretValue secret={row} /> },
     { header: 'Updated', accessorKey: 'updated_at', render: (row) => new Date(row.updated_at).toLocaleDateString() },
     { 
         header: 'Actions', 
         className: 'w-[100px]',
         render: (row) => (
             <div className="flex items-center gap-2">
+                <ShareResource type="secret" id={row.id} name={row.name} buttonVariant="ghost" />
                 <Button 
                     variant="ghost" 
                     size="icon" 

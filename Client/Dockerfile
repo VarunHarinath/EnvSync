@@ -1,18 +1,18 @@
-FROM --platform=amd64 node:22-alpine AS Builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
-FROM --platform=amd64 nginx:alpine
+FROM nginx:alpine
 
-COPY --from=Builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 5173
+EXPOSE 80

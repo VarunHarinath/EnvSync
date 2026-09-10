@@ -1,0 +1,20 @@
+{
+  "name": "envsync",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted secrets management for engineering teams",
+  "license": "Apache-2.0",
+  "workspaces": ["WebService", "Client", "sdk/node"],
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "dev": "node scripts/dev.js",
+    "start": "npm start --workspace=envsync-webservice",
+    "test": "npm test --workspace=envsync-webservice && npm test --workspace=@envsync/node && npm run test:python",
+    "test:python": "cd sdk/python && PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "lint": "npm run lint --workspace=Client",
+    "build": "npm run build --workspace=Client",
+    "check": "npm test && npm run lint && npm run build"
+  },
+  "engines": { "node": ">=20" }
+}

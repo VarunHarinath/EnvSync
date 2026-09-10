@@ -1,9 +1,7 @@
 import { client } from './client';
 
 export const environmentSecretsApi = {
-  create: (environmentId, secretId) => client('/environment_secret', { 
-    body: { environment_id: environmentId, secret_id: secretId } 
-  }),
-  getByEnvironmentId: (environmentId) => client(`/environment_secret/getEnvironmentSecretsById/${environmentId}`),
-  remove: (attachmentId) => client(`/environment_secret/deleteEnvironmentSecretById/${attachmentId}`, { method: 'DELETE' }),
+  create: (environmentId, secretId) => client(`/environments/${environmentId}/secrets/${secretId}`, { body: {} }),
+  getByEnvironmentId: (environmentId) => client(`/environments/${environmentId}/secrets`),
+  remove: (attachmentId) => client(`/environment-secrets/${attachmentId}`, { method: 'DELETE' }),
 };

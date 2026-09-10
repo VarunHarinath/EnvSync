@@ -1,46 +1,37 @@
-version: "3.8"
-
 services:
-  envsync-db:
-    image: postgres:15-alpine
-    container_name: envsync-db
+  db:
+    image: postgres:16-alpine
     environment:
-      - POSTGRES_USER=envsync_admin
-      - POSTGRES_PASSWORD=envsync_password
-      - POSTGRES_DB=envsync
-    ports:
-      - "5432:5432"
-    volumes:
-      - envsync-db-data:/var/lib/postgresql/data
-
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U envsync_admin -d envsync" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  envsync-backend:
-    build:
-      context: ./WebService
-      dockerfile: Dockerfile
-    container_name: envsync-backend
-    ports:
-      - "8080:8080"
+      POSTGRES_USER: envsync
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: envsync
+    volumes: [envsync-data-v2:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U envsync -d envsync"], interval: 5s, timeout: 5s, retries: 10 }
+    restart: unless-stopped
+    networks: [backend]
+  api:
+    build: ./WebService
     environment:
-      - DATABASE_URL=postgres://envsync_admin:envsync_password@envsync-db:5432/envsync
-    depends_on:
-      envsync-db:
-        condition: service_healthy
-
-  envsync-frontend:
-    build:
-      context: ./Client
-      dockerfile: Dockerfile
-    container_name: envsync-frontend
-    ports:
-      - "5173:5173"
-    depends_on:
-      - envsync-backend
-
+      NODE_ENV: production
+      DATABASE_URL: postgres://envsync:${POSTGRES_PASSWORD}@db:5432/envsync
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+      ENVSYNC_MASTER_KEY: ${ENVSYNC_MASTER_KEY:?Set ENVSYNC_MASTER_KEY}
+      PUBLIC_URL: ${PUBLIC_URL:-http://envsync.local}
+      CORS_ORIGINS: ${PUBLIC_URL:-http://envsync.local}
+      TRUST_PROXY: "true"
+    depends_on: { db: { condition: service_healthy } }
+    healthcheck: { test: ["CMD", "node", "-e", "fetch('http://localhost:8080/ready').then(r=>{if(!r.ok)process.exit(1)})"], interval: 10s, timeout: 5s, retries: 10 }
+    restart: unless-stopped
+    networks: [backend, frontend]
+  web:
+    build: ./Client
+    ports: ["${ENVSYNC_PORT:-80}:80"]
+    depends_on: { api: { condition: service_healthy } }
+    healthcheck: { test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/"], interval: 10s, timeout: 5s, retries: 10 }
+    restart: unless-stopped
+    networks: [frontend]
+networks:
+  backend: { internal: true }
+  frontend: {}
 volumes:
-  envsync-db-data:
+  envsync-data-v2: {}

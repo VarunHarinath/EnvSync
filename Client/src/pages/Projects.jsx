@@ -10,11 +10,14 @@ import Modal from '../components/common/Modal';
 import Input from '../components/common/Input';
 import EmptyState from '../components/common/EmptyState';
 import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
+import { useAuth } from '../context/AuthContext';
 
 
 export default function Projects() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const canWrite = user?.role === 'ADMIN' || user?.permissions?.write;
   const [iscreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
@@ -39,7 +42,7 @@ export default function Projects() {
         setNewProjectName('');
         refetch();
     } catch (error) {
-        toast({ title: 'Error', description: 'Failed to create project.', variant: 'destructive' });
+        toast({ title: 'Could not create project', description: error.message, variant: 'destructive' });
     } finally {
         setIsCreating(false);
     }
@@ -56,7 +59,7 @@ export default function Projects() {
         setEditingProject(null);
         refetch();
     } catch (error) {
-        toast({ title: 'Error', description: 'Failed to update project.', variant: 'destructive' });
+        toast({ title: 'Could not update project', description: error.message, variant: 'destructive' });
     } finally {
         setIsUpdating(false);
     }
@@ -78,7 +81,7 @@ export default function Projects() {
         setProjectToDelete(null);
         refetch();
     } catch (error) {
-        toast({ title: 'Error', variant: 'destructive' });
+        toast({ title: 'Could not archive project', description: error.message, variant: 'destructive' });
     } finally {
         setIsDeleting(false);
     }
@@ -95,17 +98,17 @@ export default function Projects() {
                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${row.id}`); }}>
                     <Eye className="h-4 w-4" />
                 </Button>
-                <Button 
+                {canWrite && <Button
                     variant="ghost" 
                     size="icon" 
                     onClick={(e) => openEditModal(e, row)}
                     className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-950/30"
                 >
                     <Edit2 className="h-4 w-4" />
-                </Button>
-                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); setProjectToDelete(row); }}>
+                </Button>}
+                 {canWrite && <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); setProjectToDelete(row); }}>
                     <Trash2 className="h-4 w-4" />
-                </Button>
+                </Button>}
             </div>
         )
     }
@@ -115,9 +118,9 @@ export default function Projects() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-        <Button onClick={() => { setNewProjectName(''); setIsCreateModalOpen(true); }}>
+        {canWrite ? <Button onClick={() => { setNewProjectName(''); setIsCreateModalOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" /> New Project
-        </Button>
+        </Button> : <span className="text-sm text-muted-foreground border rounded-md px-3 py-2">Read-only access</span>}
       </div>
 
       <div className="rounded-md border bg-card">

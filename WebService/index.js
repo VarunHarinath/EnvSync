@@ -1,70 +1,7 @@
-// Module imports...
-import express from "express";
-import cors from "cors";
-import * as Sentry from "@sentry/node";
-// import {
-//   clerkMiddleware,
-//   requireAuth,
-//   getAuth,
-//   clerkClient,
-// } from "@clerk/express";
-import { configDotenv } from "dotenv";
+import { createApp } from "./app.js";
+import { config } from "./config.js";
+import { migrate } from "./db/migrate.js";
 
-// Components imports...
-import { homeRouter } from "./routes/HomeRoute.js";
-import { projectRouter } from "./routes/ProjectRoute.js";
-import { environmentRouter } from "./routes/EnvironmentRoute.js";
-import { secretRouter } from "./routes/SecretRoute.js";
-import { environmentSecretRoute } from "./routes/EnvironmentSecretRoute.js";
-import { apiRouter } from "./routes/ApiRoute.js";
-
-// Dotenv Config
-configDotenv();
-
-// Serive Instance
-const webService = express();
-
-webService.use(express.json());
-webService.use(cors());
-// webService.use(clerkMiddleware());
-
-// Routes/controllers first
-webService.use("/api/v1/environment_secret", environmentSecretRoute);
-webService.use("/api/v1/secret", secretRouter);
-webService.use("/api/v1/environment", environmentRouter);
-webService.use("/api/v1", homeRouter);
-webService.use("/api/v1/project", projectRouter);
-webService.use("/api/v1/api", apiRouter);
-
-// Test Route For Clerk -- temporarily puased for homelab integration
-// webService.get("/user", requireAuth(), async (req, res) => {
-//   try {
-//     const { userId } = getAuth(req);
-//     const user = await clerkClient.users.getUser(userId);
-//     res.json(user);
-//   } catch (e) {
-//     next(e);
-//   }
-// });
-
-// Debug route must be before error handlers
-webService.get("/debug-sentry", (req, res) => {
-  throw new Error("My first Sentry error!");
-});
-
-// Sentry error handler AFTER routes/controllers
-Sentry.setupExpressErrorHandler(webService);
-
-// Global fallback error handler AFTER Sentry handler
-webService.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  Sentry.captureMessage(err.message);
-  res.status(statusCode).json({
-    error: err.message || "Internal Server Error",
-    sentry: res.sentry ?? null,
-  });
-});
-
-webService.listen(8080, () => {
-  console.log("server is running on port 8080");
-});
+await migrate();
+const server=createApp().listen(config.port,config.host,()=>console.log(`EnvSync API listening on ${config.host}:${config.port}`));
+const shutdown=()=>server.close(()=>process.exit(0)); process.on("SIGTERM",shutdown);process.on("SIGINT",shutdown);

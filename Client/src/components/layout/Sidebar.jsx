@@ -1,19 +1,19 @@
 import React from 'react';
-import { NavLink, useParams, useLocation } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { cn } from '../../utils';
 import { 
   LayoutDashboard, 
   Server, 
   Lock, 
   Key, 
-  Settings, 
-  Hexagon 
+  Settings, Users, ScrollText, LogOut
 } from 'lucide-react';
 import Logo from '../common/Logo';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar() {
   const { projectId } = useParams();
-  const location = useLocation();
+  const { user, logout } = useAuth();
 
   // If we are in project context, links go to project resources.
   // If not, they might be disabled or point to project selection.
@@ -42,11 +42,11 @@ export default function Sidebar() {
         icon: Lock, 
         to: `/projects/${projectId}/secrets` 
       },
-      { 
+      ...(user?.role === 'ADMIN' || user?.permissions?.can_pull_secrets ? [{
         label: 'API Keys', 
         icon: Key, 
         to: `/projects/${projectId}/api-keys` 
-      },
+      }] : []),
     ] : []),
     // Global
     { 
@@ -54,6 +54,10 @@ export default function Sidebar() {
       icon: Settings, 
       to: '/settings' 
     },
+    ...(user?.role === 'ADMIN' ? [
+      { label: 'Users', icon: Users, to: '/admin/users' },
+      { label: 'Audit logs', icon: ScrollText, to: '/admin/audit-logs' },
+    ] : []),
   ];
 
   return (
@@ -93,12 +97,13 @@ export default function Sidebar() {
       <div className="p-4 border-t bg-muted/10">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
-            JD
+            {user?.full_name?.split(' ').map(x => x[0]).join('').slice(0,2).toUpperCase()}
           </div>
           <div className="text-sm">
-            <p className="font-medium text-foreground">John Doe</p>
-            <p className="text-xs text-muted-foreground">admin@envsync.com</p>
+            <p className="font-medium text-foreground">{user?.full_name}</p>
+            <p className="text-xs text-muted-foreground">{user?.email}</p>
           </div>
+          <button title="Sign out" onClick={logout} className="ml-auto text-muted-foreground hover:text-foreground"><LogOut className="h-4 w-4" /></button>
         </div>
       </div>
     </aside>
