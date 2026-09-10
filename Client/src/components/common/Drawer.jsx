@@ -26,7 +26,7 @@ export default function Drawer({
   return (
     <div 
       className={cn(
-        "fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity",
+        "fixed inset-0 z-50 flex justify-end bg-black/45 transition-opacity duration-200",
         isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
       )}
     >
@@ -36,22 +36,22 @@ export default function Drawer({
       />
       <div 
         className={cn(
-          "relative z-50 h-full w-full max-w-md bg-background shadow-xl transition-transform duration-300 ease-in-out border-l",
+          "relative z-50 h-full w-full max-w-[460px] bg-card shadow-2xl shadow-black/30 transition-transform duration-200 ease-out border-l",
           isOpen ? "translate-x-0" : "translate-x-full",
           className
         )}
       >
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <h3 className="font-semibold text-lg">{title}</h3>
+        <div className="flex min-h-16 items-center justify-between border-b px-6 py-4">
+          <h3 className="min-w-0 font-semibold text-base">{title}</h3>
           <button
             onClick={onClose}
-            className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <X className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </button>
         </div>
-        <div className="h-[calc(100%-4rem)] overflow-y-auto p-6">
+        <div className="h-[calc(100%-4rem)] overflow-y-auto">
           {children}
         </div>
       </div>

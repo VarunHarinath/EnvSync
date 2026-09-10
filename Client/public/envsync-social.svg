@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#09090B"/>
+  <g transform="translate(140 187) scale(8)"><path fill="#6D5EF4" d="M4 6h14.5L27 14.5l-4.5 4.5-5.25-5.25H4V6Z"/><path fill="#6D5EF4" d="M28 26H13.5L5 17.5 9.5 13l5.25 5.25H28V26Z"/></g>
+  <text x="450" y="302" fill="#FAFAFA" font-family="Inter,Arial,sans-serif" font-size="92" font-weight="650" letter-spacing="-4">EnvSync</text>
+  <text x="454" y="365" fill="#A1A1AA" font-family="Inter,Arial,sans-serif" font-size="30">Self-hosted secrets for development teams.</text>
+</svg>

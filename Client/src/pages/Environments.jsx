@@ -10,7 +10,7 @@ import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import Drawer from '../components/common/Drawer';
 import Input from '../components/common/Input';
-import { Plus, Trash2, Lock, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Lock, Edit2, Copy, Layers3, CalendarDays } from 'lucide-react';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
@@ -250,15 +250,15 @@ export default function Environments() {
   if (isLoading) return <div className="p-12 flex justify-center"><LoadingSpinner /></div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Environments</h1>
+    <div className="space-y-7">
+      <div className="flex items-start justify-between gap-4">
+        <div><h1 className="text-2xl font-semibold tracking-tight">Environments</h1><p className="mt-1.5 text-sm text-muted-foreground">Organize which secrets are available in each deployment stage.</p></div>
         <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> New Environment
+          <Plus className="mr-2 h-4 w-4" /> New environment
         </Button>
       </div>
 
-      <div className="rounded-md border bg-card">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
         {(!environments || environments.length === 0) ? (
             <EmptyState 
                 title="No environments found" 
@@ -271,6 +271,7 @@ export default function Environments() {
                 columns={columns} 
                 data={environments} 
                 onRowClick={(row) => setSelectedEnv(row)}
+                className="rounded-none border-0 shadow-none"
             />
         )}
       </div>
@@ -303,13 +304,14 @@ export default function Environments() {
         isOpen={!!selectedEnv}
         onClose={() => setSelectedEnv(null)}
         title={
-          <div className="flex items-center gap-2">
-            <span>{selectedEnv?.name || 'Environment Details'}</span>
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><Layers3 className="h-4 w-4"/></span>
+            <span className="truncate">{selectedEnv?.name || 'Environment details'}</span>
             {selectedEnv && !String(selectedEnv.id).startsWith('temp-') && (
               <button 
                 onClick={openEditModal}
-                className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
-                title="Rename Environment"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title="Rename environment"
               >
                 <Edit2 className="h-4 w-4" />
               </button>
@@ -318,37 +320,21 @@ export default function Environments() {
         }
       >
         {selectedEnv && (
-            <div className="space-y-6">
-                <div>
-                    <ShareResource type="environment" id={selectedEnv.id} name={selectedEnv.name} />
+            <div>
+                <div className="border-b px-6 py-5">
+                  <p className="text-sm leading-6 text-muted-foreground">Secrets attached here are available to applications scoped to this environment.</p>
+                  <div className="mt-4"><ShareResource type="environment" id={selectedEnv.id} name={selectedEnv.name} /></div>
                 </div>
 
-                <div>
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Metadata</h4>
-                    <div className="bg-muted/30 p-4 rounded-md space-y-2 text-sm">
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">ID:</span>
-                            <code className="font-mono">{selectedEnv.id}</code>
-                        </div>
-                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Created:</span>
-                            <span>{new Date(selectedEnv.created_at).toLocaleString()}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Attached Secrets</h4>
-                        <span className="text-xs font-medium bg-muted px-1.5 py-0.5 rounded text-muted-foreground">{attachedSecrets.length}</span>
-                    </div>
+                <section className="border-b px-6 py-6">
+                    <div className="mb-4 flex items-center justify-between"><div><h4 className="text-sm font-semibold">Attached secrets</h4><p className="mt-1 text-xs text-muted-foreground">Available in this environment</p></div><span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium tabular-nums">{attachedSecrets.length}</span></div>
                     
                     {attachedSecrets.length > 0 ? (
-                        <div className="space-y-2 mb-4">
+                        <div className="mb-4 space-y-2">
                             {attachedSecrets.map(s => {
                                 const isTemp = String(s.environment_secret_id).startsWith('temp-');
                                 return (
-                                <div key={s.environment_secret_id || s.secret_id} className="p-3 bg-card border rounded-md flex justify-between items-center group transition-all hover:border-muted-foreground/20">
+                                <div key={s.environment_secret_id || s.secret_id} className="group flex items-center justify-between rounded-lg border bg-background px-3.5 py-3 transition-colors hover:border-primary/30">
                                     <div className="flex items-center gap-2">
                                         <div className={cn("h-2 w-2 rounded-full", isTemp ? "bg-yellow-500 animate-pulse" : "bg-green-500")} />
                                         <span className="font-mono text-sm font-medium">{s.secret_name}</span>
@@ -371,7 +357,7 @@ export default function Environments() {
                             })}
                         </div>
                     ) : (
-                         <div className="text-center py-8 border rounded-md border-dashed mb-4 bg-muted/10">
+                         <div className="mb-4 rounded-lg border border-dashed bg-muted/10 py-8 text-center">
                             <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
                             <p className="text-sm text-muted-foreground">No secrets attached.</p>
                         </div>
@@ -383,14 +369,22 @@ export default function Environments() {
                         onClick={handleOpenManageSecrets}
                         disabled={String(selectedEnv.id).startsWith('temp-')}
                     >
-                        <Plus className="mr-2 h-4 w-4" /> Management Secrets
+                        <Plus className="mr-2 h-4 w-4" /> Manage secrets
                     </Button>
-                </div>
+                </section>
+
+                <section className="border-b px-6 py-6">
+                    <h4 className="mb-4 text-sm font-semibold">Details</h4>
+                    <dl className="space-y-4 text-sm">
+                      <div className="flex items-start gap-3"><Copy className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"/><div className="min-w-0 flex-1"><dt className="text-xs text-muted-foreground">Environment ID</dt><dd className="mt-1 flex items-center gap-2"><code className="truncate font-mono text-xs">{selectedEnv.id}</code><button onClick={() => navigator.clipboard?.writeText(selectedEnv.id)} title="Copy environment ID" className="shrink-0 text-muted-foreground hover:text-foreground"><Copy className="h-3.5 w-3.5"/></button></dd></div></div>
+                      <div className="flex items-start gap-3"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"/><div><dt className="text-xs text-muted-foreground">Created</dt><dd className="mt-1">{new Date(selectedEnv.created_at).toLocaleString()}</dd></div></div>
+                    </dl>
+                </section>
                 
-                 <div className="pt-4 border-t">
+                 <div className="px-6 py-5">
                     <Button 
                       variant="ghost" 
-                      className="w-full text-destructive hover:bg-destructive/10"
+                      className="justify-start px-3 text-destructive hover:bg-destructive/10"
                       onClick={() => setShowDeleteConfirm(true)}
                     >
                         <Trash2 className="mr-2 h-4 w-4" /> Delete Environment

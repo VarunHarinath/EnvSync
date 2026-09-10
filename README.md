@@ -1,4 +1,10 @@
-# EnvSync
+<p align="center">
+  <img src="Client/public/envsync-mark.svg" width="72" height="72" alt="EnvSync symbol" />
+</p>
+
+<h1 align="center">EnvSync</h1>
+
+<p align="center">Self-hosted secrets for development teams.</p>
 
 EnvSync is a self-hosted secrets platform with local accounts, centralized permissions, AES-256-GCM encryption, scoped application keys, audit history, and Node.js and Python clients. It has no mandatory external identity or SaaS dependency.
 

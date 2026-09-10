@@ -8,7 +8,7 @@ import {
   Key, 
   Settings, Users, ScrollText, LogOut
 } from 'lucide-react';
-import Logo from '../common/Logo';
+import { EnvSyncLogo } from '../common/Logo';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar() {
@@ -61,22 +61,21 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 border-r bg-card flex flex-col hidden md:flex h-screen sticky top-0 transition-colors">
-      <div className="h-14 flex items-center px-6 border-b">
+    <aside className="w-60 border-r bg-card/60 flex flex-col hidden md:flex h-screen sticky top-0 transition-colors">
+      <div className="h-14 flex items-center px-5 border-b">
         <NavLink to="/" className="flex items-center gap-2.5 group">
-          <Logo className="w-7 h-7 group-hover:scale-110 transition-transform" />
-          <span className="text-lg font-bold tracking-tight text-foreground">EnvSync</span>
+          <EnvSyncLogo markClassName="h-7 w-7 group-hover:translate-x-0.5 transition-transform" wordmarkClassName="text-lg" />
         </NavLink>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
             className={({ isActive }) => cn(
-              "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
               isActive 
                 ? "bg-primary/10 text-primary" 
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"

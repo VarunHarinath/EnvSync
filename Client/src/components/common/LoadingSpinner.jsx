@@ -1,6 +1,6 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 import { cn } from '../../utils';
+import { EnvSyncMark } from './Logo';
 
 export default function LoadingSpinner({ size = 'md', className }) {
   const sizes = {
@@ -11,9 +11,9 @@ export default function LoadingSpinner({ size = 'md', className }) {
   };
 
   return (
-    <Loader2 
+    <EnvSyncMark
       className={cn(
-        "animate-spin text-primary", 
+        "animate-pulse text-primary",
         sizes[size], 
         className
       )} 

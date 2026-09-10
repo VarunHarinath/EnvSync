@@ -40,7 +40,8 @@ function validatePassword(value) {
 async function setup() {
   const dockerMode = Boolean(args.docker);
   const cyan = "\x1b[36m", green = "\x1b[32m", dim = "\x1b[2m", bold = "\x1b[1m", reset = "\x1b[0m";
-  console.log(`\n${cyan}${bold}  Welcome to EnvSync${reset}`);
+  console.log(`\n${cyan}${bold}  ◀▶  EnvSync${reset}`);
+  console.log(`  ${bold}Welcome to EnvSync${reset}`);
   console.log(`  ${dim}Your infrastructure is ready. Let's configure the workspace.${reset}\n`);
   if (!dockerMode && (await exists(envPath)) && !args.force) {
     console.error(

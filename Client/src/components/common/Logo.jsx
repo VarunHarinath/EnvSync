@@ -1,48 +1,19 @@
-import React from 'react';
+import React from "react";
+import { cn } from "../../utils/cn";
 
-export default function Logo({ className = "w-6 h-6" }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <defs>
-        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#C084FC" />
-          <stop offset="50%" stopColor="#818CF8" />
-          <stop offset="100%" stopColor="#60A5FA" />
-        </linearGradient>
-      </defs>
-      {/* Sleek multi-layered isometric bracket representing environment isolation */}
-      <path
-        d="M16 2.5L28 9.5V22.5L16 29.5L4 22.5V9.5L16 2.5Z"
-        stroke="url(#logo-grad)"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        className="opacity-90"
-      />
-      <path
-        d="M16 8.5L24.5 13.5V23.5L16 28.5L7.5 23.5V13.5L16 8.5Z"
-        fill="url(#logo-grad)"
-        className="opacity-10"
-      />
-      {/* Sync vault logic center */}
-      <path
-        d="M16 9.5V22.5"
-        stroke="url(#logo-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M11.5 14L16 9.5L20.5 14"
-        stroke="url(#logo-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="16" cy="22.5" r="2.5" fill="url(#logo-grad)" />
-    </svg>
-  );
+export function EnvSyncMark({ className = "h-6 w-6", title = "EnvSync" }) {
+  return <svg viewBox="0 0 32 32" role="img" aria-label={title} className={cn("text-primary", className)} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 6h14.5L27 14.5l-4.5 4.5-5.25-5.25H4V6Z" fill="currentColor"/>
+    <path d="M28 26H13.5L5 17.5 9.5 13l5.25 5.25H28V26Z" fill="currentColor"/>
+  </svg>;
 }
+
+export function EnvSyncWordmark({ className = "" }) {
+  return <span className={cn("font-semibold tracking-[-0.025em] text-foreground", className)}>EnvSync</span>;
+}
+
+export function EnvSyncLogo({ className = "", markClassName = "h-6 w-6", wordmarkClassName = "" }) {
+  return <span className={cn("inline-flex items-center gap-2.5", className)}><EnvSyncMark className={markClassName}/><EnvSyncWordmark className={wordmarkClassName}/></span>;
+}
+
+export default EnvSyncMark;

@@ -87,3 +87,5 @@ jmeter.log
 
 *.dump
 Database_backups
+.vercel
+.env*

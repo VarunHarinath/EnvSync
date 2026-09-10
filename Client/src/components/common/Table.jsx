@@ -24,12 +24,12 @@ export default function Table({
     <div className={cn("w-full overflow-auto rounded-lg border bg-card text-card-foreground shadow-sm", className)}>
       <table className="w-full caption-bottom text-sm text-left">
         <thead className="[&_tr]:border-b">
-          <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+          <tr className="border-b">
             {columns.map((col, idx) => (
               <th
                 key={idx}
                 className={cn(
-                  "h-10 px-4 align-middle font-medium text-muted-foreground bg-muted/20",
+                  "h-11 px-5 align-middle text-xs font-medium uppercase tracking-wider text-muted-foreground bg-muted/20",
                   col.className
                 )}
               >
@@ -45,14 +45,14 @@ export default function Table({
                 key={row.id || rowIdx}
                 onClick={() => onRowClick && onRowClick(row)}
                 className={cn(
-                  "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+                  "border-b transition-colors hover:bg-muted/35 data-[state=selected]:bg-muted",
                   onRowClick && "cursor-pointer"
                 )}
               >
                 {columns.map((col, colIdx) => (
                   <td
                     key={colIdx}
-                    className={cn("p-4 align-middle", col.className)}
+                    className={cn("px-5 py-4 align-middle", col.className)}
                   >
                     {col.render ? col.render(row) : row[col.accessorKey]}
                   </td>
