@@ -11,7 +11,7 @@
     "dev": "node scripts/dev.js",
     "start": "npm start --workspace=envsync-webservice",
     "test": "npm test --workspace=envsync-webservice && npm test --workspace=@envsync/node && npm run test:python",
-    "test:python": "cd sdk/python && PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "test:python": "cd sdk/python && PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v",
     "lint": "npm run lint --workspace=Client",
     "build": "npm run build --workspace=Client",
     "check": "npm test && npm run lint && npm run build"
