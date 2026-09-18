@@ -46,7 +46,7 @@ ENVSYNC_AGENT_CREDENTIAL='your-one-time-agent-credential' \
 docker compose exec -T \
   -e ENVSYNC_AGENT_CREDENTIAL \
   -e ENVSYNC_URL=http://127.0.0.1:8080 \
-  api npm run mcp
+  api node mcp/server.js
 ```
 
 A typical MCP client configuration is:
@@ -60,7 +60,7 @@ A typical MCP client configuration is:
         "compose", "exec", "-T",
         "-e", "ENVSYNC_AGENT_CREDENTIAL",
         "-e", "ENVSYNC_URL=http://127.0.0.1:8080",
-        "api", "npm", "run", "mcp"
+        "api", "node", "mcp/server.js"
       ],
       "env": {
         "ENVSYNC_AGENT_CREDENTIAL": "your-one-time-agent-credential"
