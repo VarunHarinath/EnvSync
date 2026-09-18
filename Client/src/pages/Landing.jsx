@@ -278,7 +278,7 @@ function AgentPreview() {
           <span className="text-sm font-semibold">New agent request</span>
         </div>
         <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-          V2 preview
+          Approval required
         </span>
       </div>
       <div className="p-5 sm:p-6">
@@ -372,7 +372,7 @@ export default function Landing() {
       Code2,
       "04",
       "Use",
-      "Applications retrieve approved secrets through the SDK. Agent access arrives in V2.",
+      "Applications and approved agents retrieve secrets through the SDK or MCP.",
     ],
   ];
   const security = [
@@ -500,7 +500,7 @@ export default function Landing() {
             </div>
             <p className="mt-6 text-xs text-muted-foreground">
               Self-hosted&nbsp; • &nbsp;Open source&nbsp; • &nbsp;Node.js &amp;
-              Python SDKs&nbsp; • &nbsp;MCP coming in V2
+              Python SDKs&nbsp; • &nbsp;MCP agent access
             </p>
           </div>
           <div className="mx-auto mt-16 max-w-5xl text-left">
@@ -673,7 +673,7 @@ export default function Landing() {
           <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-2">
             <div>
               <span className="mb-5 inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                Coming in V2
+                Available in V2
               </span>
               <SectionTitle
                 eyebrow="AI agents + MCP"
@@ -717,7 +717,7 @@ export default function Landing() {
                   <div>
                     <p className="font-medium">The same environment rules</p>
                     <p className="mt-1 text-muted-foreground">
-                      V2 is designed so SDK and MCP requests use one
+                      SDK and MCP requests use one
                       authorization engine.
                     </p>
                   </div>
@@ -730,7 +730,7 @@ export default function Landing() {
 
         <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
           <SectionTitle
-            eyebrow="V2 access model"
+            eyebrow="Environment access model"
             title="Access follows environments."
           >
             Assign a developer, application, or agent to the environment it
@@ -740,9 +740,9 @@ export default function Landing() {
             {[
               [
                 "Development",
-                ["Developers", "Backend agent · V2", "Application API key"],
+                ["Developers", "Backend agent", "Application API key"],
               ],
-              ["Testing", ["QA team", "QA agent · V2", "CI"]],
+              ["Testing", ["QA team", "QA agent", "CI"]],
               ["Production", ["Production application", "No AI agents"]],
             ].map(([env, identities], i) => (
               <article
@@ -772,8 +772,8 @@ export default function Landing() {
             ))}
           </div>
           <p className="mt-5 text-xs text-muted-foreground">
-            Agent assignments and time-limited access shown above are planned
-            for V2. User sharing and scoped application API keys are live today.
+            Agent assignments, time-limited access, user sharing, and scoped
+            application API keys are available today.
           </p>
         </section>
 
@@ -784,11 +784,11 @@ export default function Landing() {
                 eyebrow="MCP activity"
                 title="Every request has an answer."
               >
-                The V2 audit experience is designed to show what an agent
+                The audit history shows what an agent
                 requested and whether it was allowed—never the secret value.
               </SectionTitle>
               <span className="w-fit rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs font-semibold text-violet-300">
-                V2 preview
+                Live audit trail
               </span>
             </div>
             <div className="mt-12 overflow-hidden rounded-xl border border-white/10 bg-zinc-950">
@@ -998,8 +998,8 @@ export default function Landing() {
             One place for the secrets your software needs.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-            Start with developers and applications. Add controlled AI-agent
-            access when V2 arrives.
+            Give developers, applications, and approved AI agents only the
+            environment access they need.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link

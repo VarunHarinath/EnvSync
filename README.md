@@ -10,7 +10,7 @@ EnvSync is a self-hosted secrets platform with local accounts, centralized permi
 
 ## One-command setup after cloning
 
-Requirements: Node.js 20+ and PostgreSQL 15+.
+Requirements: Node.js 20+ and Docker Desktop or Docker Engine. EnvSync does not use a host PostgreSQL installation.
 
 ```bash
 git clone https://github.com/VarunHarinath/EnvSync.git
@@ -18,26 +18,21 @@ cd EnvSync
 npm run setup
 ```
 
-That single root command installs the API, web console, and Node SDK dependencies, then launches the interactive wizard. The wizard validates input, tests PostgreSQL, applies migrations, creates the sole bootstrap administrator, generates application keys, writes a mode-0600 `WebService/.env`, and refuses to overwrite an existing setup.
+That single root command generates a local mode-0600 `.env`, starts PostgreSQL in Docker, builds the API and web images, launches the interactive organization/administrator wizard, applies every migration, and starts the complete stack. Database data is retained in the `envsync-data-v2` Docker volume.
 
-Start both the API and web console from the repository root:
+After setup, manage the complete stack from the repository root:
 
 ```bash
-npm run dev
+docker compose up -d --wait
+docker compose logs -f
+docker compose down
 ```
 
 Other root commands are `npm test`, `npm run lint`, `npm run build`, and `npm run check`.
 
 ## Docker
 
-```bash
-cp .env.example .env
-openssl rand -base64 48   # use as JWT_SECRET
-openssl rand -base64 32   # use as ENVSYNC_MASTER_KEY
-docker compose up -d --build
-```
-
-Run the interactive setup against the Compose database before first login. PostgreSQL is isolated on an internal network; only the web proxy is published. The API applies versioned migrations on startup and exposes `/health` and `/ready`.
+Use `npm run setup`; it is the supported Docker-native first-run path. PostgreSQL is isolated on an internal network; only the web proxy is published. The API applies versioned migrations on startup and exposes `/health` and `/ready`.
 
 ## Authentication, authorization, and storage
 
@@ -54,6 +49,14 @@ Point an internal DNS record such as `envsync.acme.internal` at the host and set
 ## SDKs
 
 `sdk/node` exports `EnvSync`, `get`, `getMany`, `getAll`, `health`, `reload`, TypeScript types, typed errors, timeouts, and optional millisecond TTL caching. `sdk/python` provides equivalent `get`, `get_many`, `get_all`, `health`, and `reload` behavior with type hints and no runtime dependency.
+
+V2 also supports approved `ea_live_` agent credentials. Agent SDK clients must provide an explicit `environmentId`/`environment_id`; the backend applies the same status, environment, access-level, expiry, and revocation policy used by MCP.
+
+## MCP agents (V2)
+
+Agents enroll as pending and cannot read a secret until an administrator approves an explicit environment assignment. Assignments can be read-only or read/write, may expire, and can be revoked immediately. EnvSync's STDIO server exposes discovery, read, write, and access-request tools; it intentionally exposes no delete tool.
+
+See [MCP agents and AI clients](docs/MCP_AGENTS.md) for enrollment, Docker configuration, Postman endpoints, threat model, and troubleshooting.
 
 ## Operations
 
