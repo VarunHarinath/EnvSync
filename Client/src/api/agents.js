@@ -4,6 +4,7 @@ export const agentsApi={
   list:(status)=>client(`/mcp/agents${status?`?status=${status}`:''}`),
   get:(id)=>client(`/mcp/agents/${id}`),
   environments:()=>client('/mcp/environments'),
+  connect:(body)=>client('/mcp/agents/connect',{body}),
   environmentAgents:(id)=>client(`/mcp/environments/${id}/agents`),
   approve:(id,body)=>client(`/mcp/agents/${id}/approve`,{body}),
   reject:(id)=>client(`/mcp/agents/${id}/reject`,{body:{}}),
