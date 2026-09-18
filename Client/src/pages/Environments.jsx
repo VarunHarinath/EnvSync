@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { environmentsApi } from '../api/environments';
 import { secretsApi } from '../api/secrets';
 import { environmentSecretsApi } from '../api/environmentSecrets';
+import { agentsApi } from '../api/agents';
 import { useFetch } from '../hooks/useFetch';
 import { useToast } from '../hooks/useToast';
 import Table from '../components/common/Table';
@@ -10,16 +11,18 @@ import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import Drawer from '../components/common/Drawer';
 import Input from '../components/common/Input';
-import { Plus, Trash2, Lock, Edit2, Copy, Layers3, CalendarDays } from 'lucide-react';
+import { Plus, Trash2, Lock, Edit2, Copy, Layers3, CalendarDays, Bot } from 'lucide-react';
 import EmptyState from '../components/common/EmptyState';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
 import { cn } from '../utils';
 import ShareResource from '../components/ShareResource';
+import { useAuth } from '../context/AuthContext';
 
 export default function Environments() {
   const { projectId } = useParams();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEnv, setSelectedEnv] = useState(null);
@@ -28,6 +31,8 @@ export default function Environments() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [environmentAgents, setEnvironmentAgents] = useState([]);
+  const canViewAgents = user?.role === 'ADMIN' || user?.permissions?.mcp_read;
 
   // Fetch Envs
   const fetchEnvs = () => environmentsApi.getByProject(projectId);
@@ -153,10 +158,12 @@ export default function Environments() {
   React.useEffect(() => {
       if (selectedEnv && !String(selectedEnv.id).startsWith('temp-')) {
           fetchSecretsData();
+          if (canViewAgents) agentsApi.environmentAgents(selectedEnv.id).then(setEnvironmentAgents).catch(() => setEnvironmentAgents([]));
       } else {
           setAttachedSecrets([]);
+          setEnvironmentAgents([]);
       }
-  }, [selectedEnv]);
+  }, [selectedEnv, canViewAgents]);
 
   const handleOpenManageSecrets = () => {
       fetchSecretsData(); 
@@ -372,6 +379,11 @@ export default function Environments() {
                         <Plus className="mr-2 h-4 w-4" /> Manage secrets
                     </Button>
                 </section>
+
+                {canViewAgents && <section className="border-b px-6 py-6">
+                    <div className="mb-4 flex items-center justify-between"><div><h4 className="text-sm font-semibold">Agent access</h4><p className="mt-1 text-xs text-muted-foreground">MCP agents assigned to this environment</p></div><span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium tabular-nums">{environmentAgents.filter(item=>!item.revoked_at).length}</span></div>
+                    {environmentAgents.length ? <div className="space-y-2">{environmentAgents.map(agent=><div key={agent.id} className="flex items-center gap-3 rounded-lg border bg-background p-3"><span className="grid h-8 w-8 place-items-center rounded-md bg-primary/10 text-primary"><Bot className="h-4 w-4"/></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{agent.display_name||agent.client_name}</p><p className="text-xs text-muted-foreground">{agent.access_level.replace('_',' + ')} · {agent.revoked_at?'Revoked':agent.expires_at?`Expires ${new Date(agent.expires_at).toLocaleString()}`:'Until revoked'}</p></div><span className={cn("h-2 w-2 rounded-full",agent.status==='APPROVED'&&!agent.revoked_at?'bg-emerald-500':'bg-muted-foreground')}/></div>)}</div>:<div className="rounded-lg border border-dashed py-7 text-center"><Bot className="mx-auto h-6 w-6 text-muted-foreground/40"/><p className="mt-2 text-sm text-muted-foreground">No agents have access.</p></div>}
+                </section>}
 
                 <section className="border-b px-6 py-6">
                     <h4 className="mb-4 text-sm font-semibold">Details</h4>

@@ -6,7 +6,7 @@ import {
   Server, 
   Lock, 
   Key, 
-  Settings, Users, ScrollText, LogOut
+  Settings, Users, ScrollText, LogOut, Bot
 } from 'lucide-react';
 import { EnvSyncLogo } from '../common/Logo';
 import { useAuth } from '../../context/AuthContext';
@@ -54,6 +54,7 @@ export default function Sidebar() {
       icon: Settings, 
       to: '/settings' 
     },
+    ...(user?.role === 'ADMIN' || user?.permissions?.mcp_read ? [{ label: 'MCP Agents', icon: Bot, to: '/mcp' }] : []),
     ...(user?.role === 'ADMIN' ? [
       { label: 'Users', icon: Users, to: '/admin/users' },
       { label: 'Audit logs', icon: ScrollText, to: '/admin/audit-logs' },

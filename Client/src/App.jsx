@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Users from './pages/Users';
 import AuditLogs from './pages/AuditLogs';
+import McpAgents from './pages/McpAgents';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -35,6 +36,7 @@ export default function App() {
              <Route path="/settings" element={<Settings />} />
              <Route path="/admin/users" element={<ProtectedRoute admin><Users /></ProtectedRoute>} />
              <Route path="/admin/audit-logs" element={<ProtectedRoute admin><AuditLogs /></ProtectedRoute>} />
+             <Route path="/mcp" element={<McpAgents />} />
           </Route>
           
           {/* Catch-all redirect to Landing */}
