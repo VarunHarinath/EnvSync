@@ -38,4 +38,4 @@ export function decryptSecret(row) {
   decipher.setAuthTag(row.auth_tag); return Buffer.concat([decipher.update(row.ciphertext), decipher.final()]).toString("utf8");
 }
 export function generateApiKey() { const raw = `es_live_${randomToken(32)}`; return { raw, prefix: raw.slice(0, 16), hash: sha256(raw) }; }
-
+export function generateAgentCredential() { const raw = `ea_live_${randomToken(32)}`; return { raw, prefix: raw.slice(0, 16), hash: sha256(raw) }; }

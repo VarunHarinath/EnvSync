@@ -5,22 +5,31 @@
   "license": "Apache-2.0",
   "type": "module",
   "main": "index.js",
-  "bin": { "envsync": "cli/envsync.js" },
+  "bin": {
+    "envsync": "cli/envsync.js"
+  },
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
     "setup": "node cli/envsync.js setup",
     "migrate": "node db/migrate.js",
+    "mcp": "node mcp/server.js",
     "test": "NODE_ENV=test node --test test/**/*.test.js",
     "check": "node --check index.js && node --check app.js"
   },
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "pg": "^8.16.3",
     "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0"
   }
 }
