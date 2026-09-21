@@ -28,16 +28,16 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center sm:p-4">
       <div 
         className="absolute inset-0" 
         onClick={onClose} 
       />
       <div className={cn(
-        "relative z-50 w-full max-w-lg overflow-hidden rounded-lg border bg-background p-0 shadow-lg sm:rounded-xl animate-in zoom-in-95 duration-200",
+        "relative z-50 flex max-h-[100dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border bg-background p-0 shadow-lg animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)] sm:rounded-xl",
         className
       )}>
-        <div className="flex items-center justify-between border-b px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b px-4 py-4 sm:px-6">
           <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
           <button
             onClick={onClose}
@@ -47,11 +47,11 @@ export default function Modal({
             <span className="sr-only">Close</span>
           </button>
         </div>
-        <div className="p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6">
           {children}
         </div>
         {footer && (
-          <div className="bg-muted/40 px-6 py-4 flex justify-end gap-2">
+          <div className="flex shrink-0 flex-col-reverse gap-2 border-t bg-muted/40 px-4 py-3 sm:flex-row sm:justify-end sm:px-6 sm:py-4">
             {footer}
           </div>
         )}
