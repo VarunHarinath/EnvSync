@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export function useFetch(fetchFn, dependencies = []) {
+export function useFetch(fetchFn) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +20,7 @@ export function useFetch(fetchFn, dependencies = []) {
 
   useEffect(() => {
     fetchData();
-  }, dependencies);
+  }, [fetchData]);
 
   return { data, setData, isLoading, error, refetch: fetchData };
 }

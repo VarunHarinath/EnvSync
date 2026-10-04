@@ -14,12 +14,12 @@ export default function ProjectDetail() {
   const { projectId } = useParams();
   const { user } = useAuth();
   const canUseSdk = user?.role === 'ADMIN' || user?.permissions?.can_pull_secrets;
-  const fetchDashboard = async () => {
+  const fetchDashboard = React.useCallback(async () => {
     const [project, environments, secrets, apiKeys] = await Promise.all([
       projectsApi.getById(projectId), environmentsApi.getByProject(projectId), secretsApi.getByProject(projectId), canUseSdk ? apiKeysApi.getByProject(projectId) : Promise.resolve([]),
     ]);
     return { project, environments, secrets, apiKeys };
-  };
+  }, [projectId, canUseSdk]);
   const { data, isLoading, error } = useFetch(fetchDashboard, [projectId, canUseSdk]);
 
   if (isLoading) return <div className="grid min-h-[55vh] place-items-center"><LoadingSpinner size="lg" /></div>;
