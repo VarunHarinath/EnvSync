@@ -16,9 +16,9 @@ export default function EnvironmentWorkspace() {
           Every environment.
         </h2>
         <p>
-          Keep the names consistent.
+          Choose secrets for each environment.
           <br />
-          Keep the values separate.
+          Grant access explicitly.
         </p>
       </div>
       <div className="lp-workspace">
@@ -43,7 +43,7 @@ export default function EnvironmentWorkspace() {
           <div className="lp-env-title">
             <span className="lp-env-number">0{active + 1}</span>
             <div>
-              <span className="lp-micro">ENVIRONMENT / ISOLATED VALUES</span>
+              <span className="lp-micro">ENVIRONMENT / SCOPED ACCESS</span>
               <h3>{environments[active]}</h3>
             </div>
             <span className="lp-micro">03 SECRETS</span>
@@ -76,7 +76,7 @@ export default function EnvironmentWorkspace() {
                 </span>
               </>
             ) : (
-              <span>Same secret names. Different values. Explicit access.</span>
+              <span>Attach selected secrets. Control who can access them.</span>
             )}
           </div>
         </div>

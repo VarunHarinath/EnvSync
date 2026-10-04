@@ -27,8 +27,8 @@ export default function AgentScene() {
   const approved = state === "AUTHORIZED";
   return (
     <section id="agents" className="lp-agents lp-wrap">
-      <SectionLabel number="05" detail="V2 PREVIEW / INTERACTIVE DEMO">
-        AGENT ACCESS
+      <SectionLabel number="05" detail="PREVIEW / INTERACTIVE DEMO">
+        MCP AGENT ACCESS
       </SectionLabel>
       <div className="lp-agent-heading">
         <h2>
@@ -38,11 +38,11 @@ export default function AgentScene() {
           <span>Not your entire vault.</span>
         </h2>
         <p>
-          Approve an agent.
+          Connect agents through MCP. Approve them explicitly.
           <br />
-          Choose its environments.
+          Choose environments and Read or Read + Write.
           <br />
-          Set permissions and an expiration.
+          Set a TTL. Revoke access whenever needed.
         </p>
       </div>
       <div className="lp-agent-console">
@@ -141,12 +141,12 @@ export default function AgentScene() {
       </div>
       <div className="lp-agent-caption">
         <span>
-          Agents connect.
+          Connection is not authorization.
           <br />
           <strong>You decide.</strong>
         </span>
         <p>
-          This is a simulated V2 workflow.
+          This is an interactive access example.
           <br />
           No credentials are created or secrets accessed.
         </p>

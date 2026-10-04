@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "apiImage": null,
+  "webImage": null,
+  "note": "Release operator must supply tested immutable container references before registry publication."
+}

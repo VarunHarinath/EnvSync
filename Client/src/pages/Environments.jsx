@@ -32,10 +32,10 @@ export default function Environments() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [environmentAgents, setEnvironmentAgents] = useState([]);
-  const canViewAgents = user?.role === 'ADMIN' || user?.permissions?.mcp_read;
+  const canViewAgents = user?.capabilities?.mcp && (user?.role === 'ADMIN' || user?.permissions?.mcp_read);
 
   // Fetch Envs
-  const fetchEnvs = () => environmentsApi.getByProject(projectId);
+  const fetchEnvs = React.useCallback(() => environmentsApi.getByProject(projectId), [projectId]);
   const { data: environments, setData: setEnvironments, isLoading, refetch } = useFetch(fetchEnvs, [projectId]);
 
   const handleCreateEnv = async () => {
@@ -139,7 +139,7 @@ export default function Environments() {
   const [isSyncingSecrets, setIsSyncingSecrets] = useState(false);
 
   // Fetch secrets for the drawer/modal
-  const fetchSecretsData = async () => {
+  const fetchSecretsData = React.useCallback(async () => {
     if (!selectedEnv) return;
     try {
         const [projSecrets, envSecrets] = await Promise.all([
@@ -152,7 +152,7 @@ export default function Environments() {
     } catch (e) {
         console.error("Failed to fetch secrets", e);
     }
-  };
+  }, [projectId, selectedEnv]);
 
   // Effect to fetch attached secrets when detail drawer opens
   React.useEffect(() => {
@@ -163,7 +163,7 @@ export default function Environments() {
           setAttachedSecrets([]);
           setEnvironmentAgents([]);
       }
-  }, [selectedEnv, canViewAgents]);
+  }, [selectedEnv, canViewAgents, fetchSecretsData]);
 
   const handleOpenManageSecrets = () => {
       fetchSecretsData(); 

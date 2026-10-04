@@ -60,10 +60,10 @@ export default function ApiKeys() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [keyToRevoke, setKeyToRevoke] = useState(null);
 
-  const fetchKeys = () => apiKeysApi.getByProject(projectId);
+  const fetchKeys = React.useCallback(() => apiKeysApi.getByProject(projectId), [projectId]);
   const { data: apiKeys, isLoading, refetch } = useFetch(fetchKeys, [projectId]);
 
-  const fetchEnvs = () => environmentsApi.getByProject(projectId);
+  const fetchEnvs = React.useCallback(() => environmentsApi.getByProject(projectId), [projectId]);
   const { data: environments } = useFetch(fetchEnvs, [projectId]);
 
   React.useEffect(() => {

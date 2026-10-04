@@ -2,7 +2,7 @@ import pg from "pg";
 import { config } from "../config.js";
 
 export const pool = new pg.Pool({ connectionString: config.databaseUrl, max: Number(process.env.DB_POOL_SIZE || 10) });
-pool.on("error", (error) => console.error("Unexpected database pool error", error.message));
+pool.on("error", () => console.error(JSON.stringify({event:"database.pool_error"})));
 
 export const query = (text, values = []) => pool.query(text, values);
 export async function transaction(work) {
@@ -11,4 +11,3 @@ export async function transaction(work) {
   catch (error) { await client.query("ROLLBACK"); throw error; }
   finally { client.release(); }
 }
-

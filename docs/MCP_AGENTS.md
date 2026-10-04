@@ -121,3 +121,6 @@ Python uses the equivalent `environment_id=` argument. Existing `es_live_` appli
 - **Docker command cannot find the project:** run it from the cloned repository or pass `docker compose --project-directory /absolute/path/to/EnvSync`.
 - **No protocol connection:** keep stdout reserved for MCP. Check container logs and the client's captured stderr.
 - **API health:** run `docker compose ps`, then `docker compose logs api`. `/ready` also confirms database connectivity.
+# Installed CLI (1.0 candidate)
+
+For CLI-managed instances, configure the AI client to run `envsync mcp serve`, with `ENVSYNC_AGENT_CREDENTIAL` in its secure environment and `ENVSYNC_HOME` if using a non-default instance directory. No repository path is needed. Transport remains STDIO; there is no HTTP MCP endpoint. Personal owners and Business administrators use the same agent approval, assignment and TTL controls. Setup can disable MCP server-side. The repository-oriented instructions below remain applicable to legacy checkout deployments. Real AI-client interoperability must be verified separately from the automated MCP protocol test.

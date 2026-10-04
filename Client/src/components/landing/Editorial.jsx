@@ -16,7 +16,7 @@ export function LandingNav() {
   const [open, setOpen] = useState(false);
   return (
     <header className="lp-nav">
-      <a href="#" className="lp-brand" aria-label="EnvSync home">
+      <a href="/" className="lp-brand" aria-label="EnvSync home">
         <Logo />
         EnvSync
       </a>
@@ -43,7 +43,7 @@ export function LandingNav() {
         <a href="#security">
           <small>03</small> SECURITY
         </a>
-        <a href={`${repo}#readme`}>
+        <a href={repo}>
           <small>04</small> DOCS ↗
         </a>
       </nav>
@@ -75,11 +75,11 @@ export function Hero() {
       </h1>
       <div className="lp-hero-bottom">
         <p>
-          Store secrets in one place.
+          Self-hosted secrets for developers, apps, and AI agents.
           <br />
-          Separate them by environment.
+          Organize them by environment.
           <br />
-          Control who — or what — gets access.
+          Control who gets access.
         </p>
         <div className="lp-hero-links">
           <a className="lp-action" href="#start">
@@ -141,7 +141,7 @@ export function Hero() {
               key={name}
             >
               {name}
-              {name === "AGENT" ? " / V2 PREVIEW" : ""} ↗
+              {name === "AGENT" ? " / PREVIEW" : ""} ↗
             </button>
           ))}
         </div>
@@ -228,6 +228,15 @@ export function LocalSection() {
               Company network.
             </p>
             <p className="lp-micro">NO MANDATORY SECRETS SAAS.</p>
+            <p className="lp-profile-copy">
+              <strong>One EnvSync. Set up for how you work.</strong>
+              <br />
+              Personal — projects, secrets, SDKs, and agents for one developer.
+              <br />
+              Business — shared resources, team permissions, and centralized access.
+              <br />
+              Two setup profiles. The same self-hosted product.
+            </p>
           </div>
           <div className="lp-topology">
             <div className="lp-micro">YOUR MACHINE / PRIVATE NETWORK</div>
@@ -254,7 +263,7 @@ export function LocalSection() {
         </div>
       </section>
       <section id="start" className="lp-start lp-wrap">
-        <SectionLabel number="08" detail="NODE.JS 20+ / DOCKER REQUIRED">
+        <SectionLabel number="08" detail="OPEN SOURCE / INSTALL FROM SOURCE">
           START HERE
         </SectionLabel>
         <h2>
@@ -264,21 +273,21 @@ export function LocalSection() {
         </h2>
         <div className="lp-start-bottom">
           <p>
-            Clone the repository.
+            Inspect it. Run it. Contribute.
             <br />
-            Run the guided setup.
+            Choose Personal or Business during setup.
             <br />
-            Your first environment starts here.
+            CLI distribution is prepared for release.
           </p>
           <div className="lp-install">
             <pre>
               <code>
                 git clone https://github.com/VarunHarinath/EnvSync.git{"\n"}cd
-                EnvSync{"\n"}npm run setup
+                EnvSync{"\n"}# Follow the source installation guide
               </code>
             </pre>
-            <a href={`${repo}#one-command-setup-after-cloning`}>
-              SETUP DOCUMENTATION ↗
+            <a href={repo}>
+              VIEW SOURCE AND INSTALL NOTES ↗
             </a>
           </div>
         </div>
@@ -289,14 +298,14 @@ export function LocalSection() {
 export function LandingFooter() {
   return (
     <footer className="lp-footer lp-wrap">
-      <a href="#" className="lp-brand">
+      <a href="/" className="lp-brand" aria-label="EnvSync home">
         <Logo />
         EnvSync
       </a>
       <span>OPEN SOURCE / APACHE-2.0</span>
       <div>
         <a href={repo}>GITHUB ↗</a>
-        <a href={`${repo}#readme`}>DOCS ↗</a>
+        <a href={repo}>DOCS ↗</a>
         <a href="/login">SIGN IN ↗</a>
       </div>
       <p>Secrets have a place.</p>

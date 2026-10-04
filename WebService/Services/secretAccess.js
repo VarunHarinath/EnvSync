@@ -1,4 +1,4 @@
-import { query } from "../db/pool.js";
+import { query,transaction } from "../db/pool.js";
 import { decryptSecret, encryptSecret } from "../lib/security.js";
 import { errors } from "../lib/errors.js";
 import { authorizeAgentEnvironment } from "./agentPolicy.js";
@@ -26,6 +26,12 @@ export async function createAgentSecret(req,environmentId,name,value){
 export async function updateAgentSecret(req,environmentId,name,value){
   if(typeof value!=="string"||!value.length||value.length>65536)throw errors.badRequest("Invalid secret value");
   await authorize(req,environmentId,"READ_WRITE","agent.secret_updated");const enc=encryptSecret(value);
-  const {rows}=await query(`UPDATE secrets s SET ciphertext=$1,nonce=$2,auth_tag=$3,key_version=$4,updated_at=now() FROM environment_secrets es WHERE es.secret_id=s.id AND es.environment_id=$5 AND s.name=$6 RETURNING s.id,s.name`,[enc.ciphertext,enc.nonce,enc.authTag,enc.keyVersion,environmentId,name]);
+  const rows=await transaction(async db=>{
+    const secret=(await db.query(`SELECT s.id FROM secrets s JOIN environment_secrets es ON es.secret_id=s.id WHERE es.environment_id=$1 AND s.name=$2 FOR UPDATE OF s`,[environmentId,name])).rows[0];
+    if(!secret)throw errors.notFound("Secret not found");
+    const attachments=(await db.query("SELECT environment_id FROM environment_secrets WHERE secret_id=$1",[secret.id])).rows;
+    for(const attachment of attachments)await authorizeAgentEnvironment(req.agent.id,attachment.environment_id,"READ_WRITE",db);
+    return (await db.query("UPDATE secrets SET ciphertext=$1,nonce=$2,auth_tag=$3,key_version=$4,updated_at=now() WHERE id=$5 RETURNING id,name",[enc.ciphertext,enc.nonce,enc.authTag,enc.keyVersion,secret.id])).rows;
+  });
   if(!rows[0])throw errors.notFound("Secret not found");await audit(req,"agent.secret_updated","secret",rows[0].id,"success",{environment_id:environmentId});return rows[0];
 }

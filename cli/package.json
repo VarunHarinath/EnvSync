@@ -1,0 +1,12 @@
+{
+  "name": "envsync",
+  "version": "1.0.0",
+  "description": "Install and operate a self-hosted EnvSync instance",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": { "envsync": "bin/envsync.js" },
+  "files": ["bin/", "lib/", "runtime/", "README.md"],
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test test/*.test.js", "check": "node --check bin/envsync.js && node --check lib/runtime.js" },
+  "repository": {"type":"git","url":"https://github.com/VarunHarinath/EnvSync.git","directory":"cli"}
+}

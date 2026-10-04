@@ -34,9 +34,9 @@ export default function App() {
              <Route path="/projects/:projectId/api-keys" element={<ApiKeys />} />
              
              <Route path="/settings" element={<Settings />} />
-             <Route path="/admin/users" element={<ProtectedRoute admin><Users /></ProtectedRoute>} />
+             <Route path="/admin/users" element={<ProtectedRoute admin capability="teamManagement"><Users /></ProtectedRoute>} />
              <Route path="/admin/audit-logs" element={<ProtectedRoute admin><AuditLogs /></ProtectedRoute>} />
-             <Route path="/mcp" element={<McpAgents />} />
+             <Route path="/mcp" element={<ProtectedRoute capability="mcp"><McpAgents /></ProtectedRoute>} />
           </Route>
           
           {/* Catch-all redirect to Landing */}

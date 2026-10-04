@@ -8,7 +8,7 @@ const rows = [
   ["DEVELOPER", "READ + WRITE", "READ + WRITE", "READ", "DENIED"],
   ["APPLICATION", "READ", "DENIED", "READ", "READ"],
   ["QA", "READ", "READ", "DENIED", "DENIED"],
-  ["AGENT / V2", "READ + WRITE", "READ", "DENIED", "DENIED"],
+  ["AGENT / PREVIEW", "READ + WRITE", "READ", "DENIED", "DENIED"],
 ];
 export default function AccessAndSdk() {
   const [language, setLanguage] = useState("NODE.JS");
@@ -102,7 +102,7 @@ export default function AccessAndSdk() {
           ))}
         </div>
         <p className="lp-micro lp-matrix-note">
-          APPLICATION KEYS: SCOPED RETRIEVAL / AGENT ASSIGNMENTS: V2 PREVIEW
+          APPLICATION KEYS: SCOPED RETRIEVAL / MCP AGENT ACCESS: PREVIEW
         </p>
       </section>
     </>

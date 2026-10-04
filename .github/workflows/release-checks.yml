@@ -1,0 +1,40 @@
+name: Release candidate checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: npm ci
+      - run: npm run check
+      - run: npm --prefix WebService run check
+      - run: npm --prefix cli test && npm --prefix cli run check
+      - run: node scripts/scan-secrets.js
+      - run: npm audit --audit-level=high
+      - run: npm audit --audit-level=high --workspaces=false
+        working-directory: Client
+      - run: npm audit --omit=dev --audit-level=high --workspaces=false
+        working-directory: WebService
+      - run: npm pack --dry-run --json
+        working-directory: cli
+      - run: npm pack --dry-run --json
+        working-directory: sdk/node
+      - run: python -m pip install build && python -m build sdk/python
+      - run: docker build -t envsync-release-api:1.0.0 WebService
+      - run: docker build -t envsync-release-web:1.0.0 Client
+      - run: node scripts/release-integration.js
+  secret-history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Local-only history pattern scan (redacted)
+        run: node scripts/scan-history.js

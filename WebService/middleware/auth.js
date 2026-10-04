@@ -1,6 +1,7 @@
 import { query } from "../db/pool.js";
 import { errors } from "../lib/errors.js";
 import { sha256, verifyAccessToken } from "../lib/security.js";
+import { getInstance } from "../Services/instance.js";
 
 export async function authenticate(req, _res, next) {
   try {
@@ -20,8 +21,12 @@ export async function authenticate(req, _res, next) {
       req.apiKey = key; await query("UPDATE api_keys SET last_used_at=now() WHERE id=$1", [key.id]); return next();
     }
     const claims = verifyAccessToken(token);
-    const { rows } = await query("SELECT id,full_name,email,role,permissions,active FROM users WHERE id=$1", [claims.sub]);
-    if (!rows[0]?.active) throw errors.unauthorized("Account is inactive"); req.user = rows[0]; next();
+    if (typeof claims.sid !== "string") throw errors.unauthorized("Please sign in again");
+    const { rows } = await query(`SELECT u.id,u.full_name,u.email,u.role,u.permissions,u.active FROM users u JOIN refresh_tokens rt ON rt.user_id=u.id WHERE u.id=$1 AND rt.id=$2 AND rt.revoked_at IS NULL AND rt.expires_at>now()`, [claims.sub,claims.sid]);
+    if (!rows[0]?.active) throw errors.unauthorized("Account is inactive");
+    req.instance=await getInstance();
+    if(req.instance.profile==="personal" && rows[0].id!==req.instance.owner_user_id) throw errors.forbidden("Only the Personal instance owner may sign in");
+    req.user = {...rows[0],profile:req.instance.profile,capabilities:req.instance.capabilities}; next();
   } catch (error) { next(error); }
 }
 export const requireUser = (req, _res, next) => req.user ? next() : next(errors.unauthorized("User authentication required"));

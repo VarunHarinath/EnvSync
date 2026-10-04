@@ -54,9 +54,9 @@ export default function Sidebar() {
       icon: Settings, 
       to: '/settings' 
     },
-    ...(user?.role === 'ADMIN' || user?.permissions?.mcp_read ? [{ label: 'MCP Agents', icon: Bot, to: '/mcp' }] : []),
+    ...(user?.capabilities?.mcp && (user?.role === 'ADMIN' || user?.permissions?.mcp_read) ? [{ label: 'MCP Agents', icon: Bot, to: '/mcp' }] : []),
     ...(user?.role === 'ADMIN' ? [
-      { label: 'Users', icon: Users, to: '/admin/users' },
+      ...(user?.capabilities?.teamManagement ? [{ label: 'Users', icon: Users, to: '/admin/users' }] : []),
       { label: 'Audit logs', icon: ScrollText, to: '/admin/audit-logs' },
     ] : []),
   ];

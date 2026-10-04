@@ -1,79 +1,102 @@
-<p align="center">
-  <img src="Client/public/envsync-mark.svg" width="72" height="72" alt="EnvSync symbol" />
-</p>
+<p align="center"><img src="Client/public/envsync-mark.svg" width="64" height="64" alt="EnvSync" /></p>
 
-<h1 align="center">EnvSync</h1>
+# EnvSync
 
-<p align="center">Self-hosted secrets for development teams.</p>
+Self-hosted secrets for developers, applications and AI agents. One product; Personal and Business deployment profiles.
 
-EnvSync is a self-hosted secrets platform with local accounts, centralized permissions, AES-256-GCM encryption, scoped application keys, audit history, and Node.js and Python clients. It has no mandatory external identity or SaaS dependency.
+## Install
 
-## One-command setup after cloning
+**1.0.0 release candidate — not yet published or declared production-ready.** The intended installation after controlled publication is:
 
-Requirements: Node.js 20+ and Docker Desktop or Docker Engine. EnvSync does not use a host PostgreSQL installation.
-
-```bash
-git clone https://github.com/VarunHarinath/EnvSync.git
-cd EnvSync
-npm run setup
+```sh
+npm install -g envsync
+envsync setup
+envsync start
 ```
 
-That single root command generates a local mode-0600 `.env`, starts PostgreSQL in Docker, builds the API and web images, launches the interactive organization/administrator wizard, applies every migration, and starts the complete stack. Database data is retained in the `envsync-data-v2` Docker volume.
+The npm name returned no published package during this audit; registry ownership/publication is still unverified. Container release references have not been configured. Do not assume the public install command works today.
 
-After setup, manage the complete stack from the repository root:
+To evaluate the prepared installer from this checkout (Node 20+, Docker with Compose v2):
 
-```bash
-docker compose up -d --wait
-docker compose logs -f
-docker compose down
+```sh
+docker build -t envsync-release-api:1.0.0 WebService
+docker build -t envsync-release-web:1.0.0 Client
+cd cli
+npm pack
+npm install -g ./envsync-1.0.0.tgz
+envsync setup --api-image envsync-release-api:1.0.0 --web-image envsync-release-web:1.0.0
 ```
 
-Other root commands are `npm test`, `npm run lint`, `npm run build`, and `npm run check`.
+Choose Personal or Business and create your owner account. No host PostgreSQL or separate frontend/backend dependency installation is required. The packaged CLI itself contains only the installer and runtime manifest. Published container artifacts will remove the checkout/build requirement for end users.
 
-## Docker
+Default console: [localhost:8088](http://localhost:8088). Only loopback is published; no hosts-file changes. The CLI-managed instance is separate from an existing root Docker Compose deployment.
 
-Use `npm run setup`; it is the supported Docker-native first-run path. PostgreSQL is isolated on an internal network; only the web proxy is published. The API applies versioned migrations on startup and exposes `/health` and `/ready`.
+## Everyday commands
 
-## Authentication, authorization, and storage
+```sh
+envsync start
+envsync status
+envsync doctor
+envsync logs
+envsync stop
+envsync restart
+envsync backup --output /your/secure/location/envsync.dump
+envsync --help
+```
 
-Administrators have full access. User permissions are centralized as `read`, `write`, and `can_pull_secrets`; only administrators can alter users or API-key pull permission. Non-admin-created keys always start with pull disabled. Raw `es_live_` keys appear once, while only SHA-256 digests remain in PostgreSQL.
+Stop/restart preserve persistent volumes. Setup refuses to overwrite an existing owner/configuration. Interrupted first bootstrap can use `setup --resume`; if bootstrap already completed, use `start`. Update currently reports that no published update source is configured and changes nothing.
 
-Access tokens expire after 15 minutes by default. Random refresh tokens are hashed, carried in HttpOnly SameSite=Strict cookies, and rotated. Passwords use bcrypt cost 12; five failed logins cause a 15-minute lock. Secret lists never contain plaintext. Reveal and SDK endpoints authorize, decrypt in memory, and write audit metadata without secret values.
+## Personal / Business
 
-Protect and separately back up `ENVSYNC_MASTER_KEY`: losing it makes stored values unrecoverable. Database backups alone are intentionally insufficient.
+**Personal:** one owner, projects, environments, encrypted secrets, application keys, SDKs, approved agents, expiry, revocation and audit. Team administration and resource sharing are absent from navigation and rejected by the backend.
 
-## Internal hostname and TLS
+**Business:** the same core plus local user administration, read/write ceilings, explicit resource sharing, administrator-controlled SDK access and agent governance. SMTP/invitations are not implemented or required.
 
-Point an internal DNS record such as `envsync.acme.internal` at the host and set `PUBLIC_URL`. `.local` can work through mDNS on small networks, but managed DNS is more reliable. Put Caddy or Nginx in front for TLS, forward `Host`, `X-Real-IP`, and `X-Forwarded-Proto`, and set `TRUST_PROXY=true`. An internal CA or Caddy's internal CA works for private names after its root is installed on clients.
+Backend capabilities drive UI navigation. Existing deployments migrate to Business without changing users or volumes. There is no automatic profile conversion.
+
+## Access and secret handling
+
+Passwords use bcrypt cost 12 (maximum 72 UTF-8 bytes). Session-bound signed access tokens and hashed, rotating HttpOnly refresh tokens support revocation; deploying this candidate requires users to sign in again. Cookies are Secure on HTTPS public URLs; HTTP loopback is supported.
+
+Ownership or explicit sharing grants resource access; global read/write permissions alone no longer expose all projects. Read-only environment shares cannot modify secrets. A shared secret is one value across its attachments: **cloning an environment copies links, not independent secret values**. Agent writes require write access to every attached environment.
+
+API keys are stored hashed, revealed once and scoped by project/optional environment. Non-admin keys begin with pull disabled until an administrator enables them. Human reveal also retains the existing pull-permission requirement. SDK endpoints require application keys; agent SDK credentials use the separate agent routes.
+
+AES-256-GCM encrypts secret values at rest. Never lose the matching master key. See [backup and recovery](docs/BACKUP_RECOVERY.md) and [security](SECURITY.md).
 
 ## SDKs
 
-`sdk/node` exports `EnvSync`, `get`, `getMany`, `getAll`, `health`, `reload`, TypeScript types, typed errors, timeouts, and optional millisecond TTL caching. `sdk/python` provides equivalent `get`, `get_many`, `get_all`, `health`, and `reload` behavior with type hints and no runtime dependency.
+SDKs are separate from the installer:
 
-V2 also supports approved `ea_live_` agent credentials. Agent SDK clients must provide an explicit `environmentId`/`environment_id`; the backend applies the same status, environment, access-level, expiry, and revocation policy used by MCP.
+- Node: `sdk/node`, package `@envsync/node`, TypeScript declarations, no runtime dependencies.
+- Python: `sdk/python`, package `envsync`, type hints, no runtime dependencies.
 
-## MCP agents (V2)
+Package publication is a separate controlled release. Application keys retrieve only their approved scope. Both SDKs support agent credentials with an explicit environment.
 
-Agents enroll as pending and cannot read a secret until an administrator approves an explicit environment assignment. Assignments can be read-only or read/write, may expire, and can be revoked immediately. EnvSync's STDIO server exposes discovery, read, write, and access-request tools; it intentionally exposes no delete tool.
+## MCP
 
-See [MCP agents and AI clients](docs/MCP_AGENTS.md) for enrollment, Docker configuration, Postman endpoints, threat model, and troubleshooting.
+MCP uses **STDIO**, not an HTTP MCP endpoint. Clients launch `envsync mcp serve` with `ENVSYNC_AGENT_CREDENTIAL` configured securely in their environment. The owner/administrator approves environments, independent READ/READ_WRITE grants, TTL and revocation in the console. No delete tool is exposed. MCP can be disabled at setup.
 
-## Operations
+See [MCP guide](docs/MCP_AGENTS.md). Real Claude/Codex/Cursor client interoperability is not inferred from protocol tests.
 
-- Back up with `pg_dump -Fc`; store the master key separately.
-- Restore with `pg_restore`, configure the same key, and start the API to apply later migrations.
-- Upgrade only after a backup, rebuild, and verify `/ready`.
-- SMTP invitations are not enabled; administrators create accounts and convey temporary passwords through an existing secure channel.
-- Audit records include actor, action, resource, result, IP, user agent, and time—never decrypted values.
+## Configuration and operations
 
-## Verification
+Configuration lives in `~/.envsync` or `ENVSYNC_HOME`. Non-secret settings are in `instance.json`; sensitive runtime keys are in `runtime.env`. Unix modes are 0700/0600. Windows ACLs need verification. Do not commit generated files or copy them into tickets.
 
-```bash
-cd WebService && npm test && npm run check
-cd Client && npm run lint && npm run build
-cd sdk/node && npm test
-cd sdk/python && PYTHONPATH=src python3 -m unittest discover -s tests -v
-docker compose config
+Installed runtime is loopback-only. Remote/TLS deployment requires a reviewed reverse-proxy/public-URL configuration; it is not an automatic CLI feature yet. Docker access grants powerful local access: treat the machine's Docker administrators as trusted operators.
+
+## Development and verification
+
+```sh
+npm ci
+npm run check
+npm --prefix cli test
+node scripts/scan-secrets.js
+node scripts/release-integration.js
 ```
 
-See [SECURITY.md](SECURITY.md). Contributions should include tests, never log credentials or secret values, and enforce authorization on the backend.
+Integration tests require locally built release-test images, create isolated instances on ports 18880–18891, test installed-package setup and recovery, then stop them. They retain test volumes and owner-only configuration for investigation; they do not touch the live application.
+
+The legacy checkout setup (`npm run setup`) remains for existing Business deployments; the CLI does not automatically adopt its `envsync-data-v2` volume.
+
+Read the honest [1.0 release report](docs/ENVSYNC_1.0_RELEASE_REPORT.md) before any production rollout.

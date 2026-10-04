@@ -9,7 +9,8 @@ export async function authorizeAgentEnvironment(agentId, environmentId, required
     FROM agents a
     JOIN agent_environment_access x ON x.agent_id=a.id
     JOIN environments e ON e.id=x.environment_id
-    WHERE a.id=$1 AND e.id=$2 AND x.revoked_at IS NULL AND x.starts_at<=now()
+    JOIN projects p ON p.id=e.project_id
+    WHERE a.id=$1 AND e.id=$2 AND x.revoked_at IS NULL AND x.starts_at<=now() AND p.archived_at IS NULL
   `,[agentId,environmentId]);
   const grant=rows[0];
   if(!grant || grant.status!=="APPROVED") throw errors.forbidden("Agent is not approved for this environment");
@@ -22,7 +23,7 @@ export async function authorizeAgentEnvironment(agentId, environmentId, required
 export async function listAuthorizedEnvironments(agentId, db = { query }) {
   const { rows }=await db.query(`SELECT e.id,e.project_id,p.name project_name,e.name,e.slug,x.access_level,x.expires_at
     FROM agent_environment_access x JOIN agents a ON a.id=x.agent_id JOIN environments e ON e.id=x.environment_id JOIN projects p ON p.id=e.project_id
-    WHERE x.agent_id=$1 AND a.status='APPROVED' AND x.revoked_at IS NULL AND x.starts_at<=now()
+    WHERE x.agent_id=$1 AND a.status='APPROVED' AND x.revoked_at IS NULL AND x.starts_at<=now() AND p.archived_at IS NULL
       AND (a.expires_at IS NULL OR a.expires_at>now()) AND (x.expires_at IS NULL OR x.expires_at>now()) ORDER BY e.name`,[agentId]);
   return rows;
 }

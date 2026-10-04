@@ -49,7 +49,7 @@ export default function Secrets() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch
-  const fetchSecrets = () => secretsApi.getByProject(projectId);
+  const fetchSecrets = React.useCallback(() => secretsApi.getByProject(projectId), [projectId]);
   const { data, isLoading, refetch } = useFetch(fetchSecrets, [projectId]);
   const secrets = data || [];
 

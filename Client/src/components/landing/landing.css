@@ -1066,6 +1066,14 @@
   font-size: 12px;
   color: var(--lp-ink);
 }
+.lp-local .lp-profile-copy {
+  border-top: 1px solid #afb4a5;
+  padding-top: 18px;
+}
+.lp-local .lp-profile-copy strong {
+  color: var(--lp-ink);
+  font-weight: 650;
+}
 .lp-topology {
   border: 1px dashed #9a9e91;
   padding: 22px;
@@ -1156,6 +1164,8 @@
 .lp-install pre {
   font: 12px/2.4 monospace;
   overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   padding: 20px 0;
 }
 .lp-install a {

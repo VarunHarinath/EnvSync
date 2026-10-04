@@ -86,6 +86,11 @@ dist-ssr
 jmeter.log
 
 *.dump
+*.tgz
+runtime.env
+instance.json
+*-bootstrap.json
+__pycache__/
 Database_backups
 .vercel
 .env*
