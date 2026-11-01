@@ -1,102 +1,410 @@
-<p align="center"><img src="Client/public/envsync-mark.svg" width="64" height="64" alt="EnvSync" /></p>
+<div align="center">
+<img src="Client/public/envsync-mark.svg" width="80" height="80" alt="EnvSync Logo" />
 
-# EnvSync
+EnvSync
 
-Self-hosted secrets for developers, applications and AI agents. One product; Personal and Business deployment profiles.
+Your infrastructure. Your secrets. Your control.
 
-## Install
+A self-hosted secrets management platform for developers, applications, and AI agents.
 
-**1.0.0 release candidate — not yet published or declared production-ready.** The intended installation after controlled publication is:
+Manage environment variables, control access, and securely deliver secrets across your development workflow.
 
-```sh
+Website · Documentation · Report an Issue · GitHub
+
+</div>
+
+⸻
+
+The Problem
+
+.env files work.
+
+Until your project grows.
+
+Secrets get copied across local machines, servers, deployment pipelines, and development environments.
+
+Eventually, keeping track of who has access to what becomes more complicated than it should be.
+
+EnvSync replaces scattered configuration files with centralized, controlled access to secrets.
+
+One platform. Multiple environments. Explicit permissions.
+
+⸻
+
+What You Can Do With EnvSync
+
+Capability	Description
+🔐 Secrets Management	Store and manage encrypted application secrets.
+🌍 Multiple Environments	Organize configuration across Development, Testing, Staging, and Production.
+👥 Access Control	Manage ownership, permissions, and resource sharing.
+🔑 Scoped API Keys	Give applications access only to approved projects and environments.
+📦 Developer SDKs	Integrate secrets into Node.js and Python applications.
+🤖 AI Agent Access	Manage approved agent access with environment-specific permissions and expiration.
+🐳 Self-Hosted Deployment	Run EnvSync on infrastructure you control using Docker.
+📋 Audit History	Maintain records of supported security-relevant operations.
+
+⸻
+
+Built for Developers, Applications, and AI Agents
+
+EnvSync brings three types of consumers into one secrets-management platform.
+
+                 ┌──────────────────┐
+                 │      EnvSync     │
+                 │  Secrets Manager │
+                 └────────┬─────────┘
+                          │
+             ┌────────────┼────────────┐
+             │            │            │
+        Developers    Applications   AI Agents
+             │            │            │
+             └────────────┼────────────┘
+                          │
+                   Access Control
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+          Projects               Environments
+                                      │
+                          ┌───────────┼───────────┐
+                          │           │           │
+                         DEV         TEST        PROD
+
+The principle is simple:
+
+Give every identity access to what it needs, not everything available.
+
+⸻
+
+Getting Started
+
+Requirements
+
+* Node.js 20+
+* Docker with Compose v2
+* A supported local environment
+
+Installation Status
+
+[!IMPORTANT]
+EnvSync 1.0.0 is currently a release candidate.
+
+The CLI package has not been publicly published or declared production-ready.
+
+The commands below describe the intended installation experience after publication.
+
 npm install -g envsync
 envsync setup
 envsync start
-```
 
-The npm name returned no published package during this audit; registry ownership/publication is still unverified. Container release references have not been configured. Do not assume the public install command works today.
+Try the Current Release Candidate
 
-To evaluate the prepared installer from this checkout (Node 20+, Docker with Compose v2):
+Clone the repository:
 
-```sh
+git clone https://github.com/VarunHarinath/EnvSync.git
+cd EnvSync
+
+Build the application images:
+
 docker build -t envsync-release-api:1.0.0 WebService
 docker build -t envsync-release-web:1.0.0 Client
+
+Package and install the CLI:
+
 cd cli
 npm pack
 npm install -g ./envsync-1.0.0.tgz
-envsync setup --api-image envsync-release-api:1.0.0 --web-image envsync-release-web:1.0.0
-```
 
-Choose Personal or Business and create your owner account. No host PostgreSQL or separate frontend/backend dependency installation is required. The packaged CLI itself contains only the installer and runtime manifest. Published container artifacts will remove the checkout/build requirement for end users.
+Run the setup:
 
-Default console: [localhost:8088](http://localhost:8088). Only loopback is published; no hosts-file changes. The CLI-managed instance is separate from an existing root Docker Compose deployment.
+envsync setup \
+  --api-image envsync-release-api:1.0.0 \
+  --web-image envsync-release-web:1.0.0
 
-## Everyday commands
+Choose your deployment profile and create your owner account.
 
-```sh
+Once started, open:
+
+http://localhost:8088
+
+The installed instance is accessible through the local loopback interface by default.
+
+⸻
+
+Choose Your Deployment Profile
+
+EnvSync supports two deployment profiles.
+
+Personal
+
+For individual developers managing their own applications and infrastructure.
+
+Includes:
+
+* Project and environment management
+* Encrypted secrets
+* Scoped application keys
+* Node.js and Python SDKs
+* Agent access and approvals
+* Expiration and revocation
+* Audit history
+
+Business
+
+For teams that need shared access and administration.
+
+Includes everything in Personal, plus:
+
+* Local user administration
+* Resource sharing
+* Read/write permission ceilings
+* Administrator-controlled SDK access
+* Agent governance
+
+Both profiles run on infrastructure you control.
+
+Team administration and resource-sharing operations are unavailable in Personal mode, including at the backend level.
+
+⸻
+
+Integrate EnvSync Into Your Applications
+
+EnvSync provides separate SDKs for Node.js and Python.
+
+Node.js
+
+Package source: sdk/node
+
+import { EnvSync } from "@envsync/node";
+const envsync = new EnvSync({
+  apiKey: process.env.ENVSYNC_API_KEY,
+  baseUrl: process.env.ENVSYNC_URL
+});
+const databaseUrl = await envsync.get("DATABASE_URL");
+
+Python
+
+Package source: sdk/python
+
+The Python SDK provides corresponding secret-retrieval functionality with type hints.
+
+[!NOTE]
+SDK source code is included in this repository. Public package publication is managed separately.
+
+Applications retrieve secrets using scoped credentials. The SDK packages are not bundled with the EnvSync installer.
+
+⸻
+
+AI Agents, With Boundaries
+
+AI agents are becoming part of modern development workflows.
+
+But connecting an agent to your infrastructure shouldn’t automatically grant access to every secret.
+
+EnvSync introduces an approval-based access model for AI agents.
+
+Environment	Example Permission
+Development	Read + Write
+Testing	Read
+Staging	Denied
+Production	Denied
+
+Agent access supports:
+
+* Human approval
+* Environment-specific permissions
+* Read and read/write grants
+* Time-limited access
+* Credential and grant revocation
+* Server-side authorization checks
+
+MCP Integration
+
+EnvSync supports a local MCP STDIO bridge.
+
+envsync mcp serve
+
+Clients must securely provide ENVSYNC_AGENT_CREDENTIAL.
+
+MCP can be disabled during setup.
+
+[!WARNING]
+MCP interoperability with specific external clients has not yet been fully validated.
+
+Protocol tests do not establish compatibility with every AI coding assistant. Review the MCP documentation before use.
+
+⸻
+
+Security by Design
+
+EnvSync implements several security controls:
+
+Encryption
+
+AES-256-GCM encryption protects stored secret values.
+
+Authentication
+
+Passwords are hashed using bcrypt. Sessions use signed access tokens and rotating, hashed refresh tokens.
+
+Authorization
+
+Ownership, resource sharing, and scoped application credentials determine access.
+
+Credential Management
+
+Application keys are stored hashed, revealed once, and can be revoked.
+
+Agent Permissions
+
+Agent operations are checked against approval status, environment assignments, permission levels, and expiration.
+
+Audit History
+
+Supported security-relevant operations are recorded for review.
+
+[!CAUTION]
+Self-hosting does not automatically guarantee secure operation.
+
+Operators remain responsible for TLS, network configuration, backups, master-key protection, and infrastructure security.
+
+EnvSync 1.0.0 has not been declared production-ready or independently security-audited.
+
+Read the Security Documentation before deploying.
+
+⸻
+
+CLI Reference
+
+Common operations:
+
 envsync start
+envsync stop
+envsync restart
 envsync status
 envsync doctor
 envsync logs
-envsync stop
-envsync restart
+
+Create a database backup:
+
 envsync backup --output /your/secure/location/envsync.dump
+
+View available commands:
+
 envsync --help
-```
 
-Stop/restart preserve persistent volumes. Setup refuses to overwrite an existing owner/configuration. Interrupted first bootstrap can use `setup --resume`; if bootstrap already completed, use `start`. Update currently reports that no published update source is configured and changes nothing.
+Persistent volumes are preserved during normal stop and restart operations.
 
-## Personal / Business
+⸻
 
-**Personal:** one owner, projects, environments, encrypted secrets, application keys, SDKs, approved agents, expiry, revocation and audit. Team administration and resource sharing are absent from navigation and rejected by the backend.
+Architecture
 
-**Business:** the same core plus local user administration, read/write ceilings, explicit resource sharing, administrator-controlled SDK access and agent governance. SMTP/invitations are not implemented or required.
+EnvSync uses a containerized architecture.
 
-Backend capabilities drive UI navigation. Existing deployments migrate to Business without changing users or volumes. There is no automatic profile conversion.
+                 Developer / Application
+                           │
+                           ▼
+                    EnvSync Console
+                           │
+                           ▼
+                      Node.js API
+                           │
+                  ┌────────┴────────┐
+                  │                 │
+             PostgreSQL       Authorization
+                  │                 │
+             Encrypted         Scoped Access
+              Secrets          & Agent Policy
 
-## Access and secret handling
+Technology Stack
 
-Passwords use bcrypt cost 12 (maximum 72 UTF-8 bytes). Session-bound signed access tokens and hashed, rotating HttpOnly refresh tokens support revocation; deploying this candidate requires users to sign in again. Cookies are Secure on HTTPS public URLs; HTTP loopback is supported.
+Layer	Technology
+Frontend	React
+Backend	Node.js
+Database	PostgreSQL
+Containerization	Docker / Docker Compose
+SDKs	Node.js, Python
+Agent Integration	MCP (STDIO)
+Secret Encryption	AES-256-GCM
 
-Ownership or explicit sharing grants resource access; global read/write permissions alone no longer expose all projects. Read-only environment shares cannot modify secrets. A shared secret is one value across its attachments: **cloning an environment copies links, not independent secret values**. Agent writes require write access to every attached environment.
+The default CLI-managed deployment binds to loopback only.
 
-API keys are stored hashed, revealed once and scoped by project/optional environment. Non-admin keys begin with pull disabled until an administrator enables them. Human reveal also retains the existing pull-permission requirement. SDK endpoints require application keys; agent SDK credentials use the separate agent routes.
+Remote access and TLS require additional reviewed configuration.
 
-AES-256-GCM encrypts secret values at rest. Never lose the matching master key. See [backup and recovery](docs/BACKUP_RECOVERY.md) and [security](SECURITY.md).
+⸻
 
-## SDKs
+Development
 
-SDKs are separate from the installer:
+Install dependencies:
 
-- Node: `sdk/node`, package `@envsync/node`, TypeScript declarations, no runtime dependencies.
-- Python: `sdk/python`, package `envsync`, type hints, no runtime dependencies.
-
-Package publication is a separate controlled release. Application keys retrieve only their approved scope. Both SDKs support agent credentials with an explicit environment.
-
-## MCP
-
-MCP uses **STDIO**, not an HTTP MCP endpoint. Clients launch `envsync mcp serve` with `ENVSYNC_AGENT_CREDENTIAL` configured securely in their environment. The owner/administrator approves environments, independent READ/READ_WRITE grants, TTL and revocation in the console. No delete tool is exposed. MCP can be disabled at setup.
-
-See [MCP guide](docs/MCP_AGENTS.md). Real Claude/Codex/Cursor client interoperability is not inferred from protocol tests.
-
-## Configuration and operations
-
-Configuration lives in `~/.envsync` or `ENVSYNC_HOME`. Non-secret settings are in `instance.json`; sensitive runtime keys are in `runtime.env`. Unix modes are 0700/0600. Windows ACLs need verification. Do not commit generated files or copy them into tickets.
-
-Installed runtime is loopback-only. Remote/TLS deployment requires a reviewed reverse-proxy/public-URL configuration; it is not an automatic CLI feature yet. Docker access grants powerful local access: treat the machine's Docker administrators as trusted operators.
-
-## Development and verification
-
-```sh
 npm ci
+
+Run verification:
+
 npm run check
 npm --prefix cli test
 node scripts/scan-secrets.js
 node scripts/release-integration.js
-```
 
-Integration tests require locally built release-test images, create isolated instances on ports 18880–18891, test installed-package setup and recovery, then stop them. They retain test volumes and owner-only configuration for investigation; they do not touch the live application.
+Integration testing requires locally built release-test images.
 
-The legacy checkout setup (`npm run setup`) remains for existing Business deployments; the CLI does not automatically adopt its `envsync-data-v2` volume.
+Tests create isolated instances and retain their test volumes for investigation.
 
-Read the honest [1.0 release report](docs/ENVSYNC_1.0_RELEASE_REPORT.md) before any production rollout.
+They do not modify the live application.
+
+⸻
+
+Documentation
+
+Document	Purpose
+Security	Security controls and considerations
+Backup & Recovery	Backup and recovery procedures
+MCP Agents	Agent configuration and authorization
+1.0 Release Report	Release readiness and known limitations
+
+⸻
+
+Project Status
+
+EnvSync 1.0.0 Release Candidate
+
+The core platform, deployment tooling, SDK source code, and agent authorization components have been implemented.
+
+Current priorities include:
+
+* Controlled package publication
+* Container artifact publication
+* Security hardening
+* External MCP client interoperability testing
+* Installation and recovery validation
+* Production-readiness assessment
+
+For deployment decisions, consult the 1.0 Release Report.
+
+⸻
+
+Feedback & Collaboration
+
+EnvSync is being developed with a focus on practical developer experience, secure access, and infrastructure ownership.
+
+Feedback, technical discussions, and contributions are welcome.
+
+Website: https://envsync.me
+
+GitHub: https://github.com/VarunHarinath/EnvSync
+
+Email: varunharinath@envsync.me
+
+⸻
+
+<div align="center">
+
+Secrets should go where they’re needed. Not everywhere.
+
+EnvSync
+
+Built for developers who want control over their infrastructure.
+
+Explore EnvSync · View Source
+
+</div>
